@@ -87,6 +87,20 @@
     dest: "{{ ansible_env.HOME }}/.config/foot/foot.ini"
     mode: '0644'
 
+- name: Deploy Alacritty config
+  when: selected_terminal == 'alacritty'
+  ansible.builtin.template:
+    src: alacritty.toml.j2
+    dest: "{{ ansible_env.HOME }}/.config/alacritty/alacritty.toml"
+    mode: '0644'
+
+- name: Deploy Ghostty config
+  when: selected_terminal == 'ghostty'
+  ansible.builtin.template:
+    src: ghostty.config.j2
+    dest: "{{ ansible_env.HOME }}/.config/ghostty/config"
+    mode: '0644'
+
 # Shell Templates
 - name: Deploy Zsh config
   when: selected_shell == 'zsh'
