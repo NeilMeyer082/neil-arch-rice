@@ -41,9 +41,10 @@
 
 - name: Install SWWW via AUR
   when: selected_wallpaper_daemon == "swww"
-  kewlmt.aur:
-    name: swww-bin
-    state: present
+  become: false
+  ansible.builtin.command:
+    cmd: yay -S --noconfirm --needed swww-bin
+  changed_when: false
 
 # =============================================================================
 # DEPLOY WALLPAPER DAEMON CONFIGURATIONS
@@ -62,39 +63,43 @@
     dest: "{{ ansible_env.HOME }}/.config/hypr/hyprpaper.conf"
     mode: '0644'
 
----
 # =============================================================================
 # INSTALL CURSOR PACKAGES VIA AUR
 # =============================================================================
-- name: Install Bibata Cursor Theme
+- name: Install Bibata Cursor Theme via AUR
   when: selected_cursor in ['bibata-ice', 'bibata-amber']
-  kewlmt.aur:
-    name: bibata-cursor-theme-bin
-    state: present
+  become: false
+  ansible.builtin.command:
+    cmd: yay -S --noconfirm --needed bibata-cursor-theme-bin
+  changed_when: false
 
-- name: Install BreezeX Cursor Theme
+- name: Install BreezeX Cursor Theme via AUR
   when: selected_cursor == 'breezex'
-  kewlmt.aur:
-    name: breezex-cursor-theme
-    state: present
+  become: false
+  ansible.builtin.command:
+    cmd: yay -S --noconfirm --needed breezex-cursor-theme
+  changed_when: false
 
-- name: Install Apple macOS Cursor Theme
+- name: Install Apple macOS Cursor Theme via AUR
   when: selected_cursor == 'apple'
-  kewlmt.aur:
-    name: apple-cursor-theme
-    state: present
+  become: false
+  ansible.builtin.command:
+    cmd: yay -S --noconfirm --needed apple-cursor-theme
+  changed_when: false
 
-- name: Install Qogir Cursor Theme
+- name: Install Qogir Cursor Theme via AUR
   when: selected_cursor == 'qogir'
-  kewlmt.aur:
-    name: qogir-cursor-theme
-    state: present
+  become: false
+  ansible.builtin.command:
+    cmd: yay -S --noconfirm --needed qogir-cursor-theme
+  changed_when: false
 
-- name: Install Vimix Cursor Theme
+- name: Install Vimix Cursor Theme via AUR
   when: selected_cursor == 'vimix'
-  kewlmt.aur:
-    name: vimix-cursor-theme
-    state: present
+  become: false
+  ansible.builtin.command:
+    cmd: yay -S --noconfirm --needed vimix-cursor-theme
+  changed_when: false
 
 - name: Install Hyprcursor utilities (Hyprland only)
   when: selected_wm == 'hyprland'
@@ -162,7 +167,6 @@
     - { option: 'gtk-cursor-theme-name', value: "{{ cursor_name | trim }}" }
     - { option: 'gtk-cursor-theme-size', value: '24' }
 
----
 # =============================================================================
 # INSTALL ICON THEMES
 # =============================================================================
@@ -177,39 +181,45 @@
 
 - name: Install Tela Icon Theme via AUR
   when: selected_icon_theme == 'tela'
-  kewlmt.aur:
-    name: tela-icon-theme
-    state: present
+  become: false
+  ansible.builtin.command:
+    cmd: yay -S --noconfirm --needed tela-icon-theme
+  changed_when: false
 
 - name: Install Candy Icon Theme via AUR
   when: selected_icon_theme == 'candy'
-  kewlmt.aur:
-    name: candy-icon-theme-git
-    state: present
+  become: false
+  ansible.builtin.command:
+    cmd: yay -S --noconfirm --needed candy-icon-theme-git
+  changed_when: false
 
 - name: Install Colloid Icon Theme via AUR
   when: selected_icon_theme == 'colloid'
-  kewlmt.aur:
-    name: colloid-icon-theme-git
-    state: present
+  become: false
+  ansible.builtin.command:
+    cmd: yay -S --noconfirm --needed colloid-icon-theme-git
+  changed_when: false
 
 - name: Install BeautyLine Icon Theme via AUR
   when: selected_icon_theme == 'beautyline'
-  kewlmt.aur:
-    name: beautyline
-    state: present
+  become: false
+  ansible.builtin.command:
+    cmd: yay -S --noconfirm --needed beautyline
+  changed_when: false
 
 - name: Install Qogir Icon Theme via AUR
   when: selected_icon_theme == 'qogir'
-  kewlmt.aur:
-    name: qogir-icon-theme
-    state: present
+  become: false
+  ansible.builtin.command:
+    cmd: yay -S --noconfirm --needed qogir-icon-theme
+  changed_when: false
 
 - name: Install Flat Remix Icon Theme via AUR
   when: selected_icon_theme == 'flat-remix'
-  kewlmt.aur:
-    name: flat-remix-icon-theme
-    state: present
+  become: false
+  ansible.builtin.command:
+    cmd: yay -S --noconfirm --needed flat-remix-icon-theme
+  changed_when: false
 
 # =============================================================================
 # MAP SELECTION TO INTERNAL GTK ICON NAME
