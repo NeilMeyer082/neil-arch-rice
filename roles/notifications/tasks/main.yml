@@ -84,13 +84,19 @@
     cmd: yay -S --noconfirm --needed swaylock-effects-git
   changed_when: false
 
-- name: Install i3lock-color & xss-lock via AUR
+- name: Install xss-lock from official repository
   when: selected_locker == 'i3lock-color'
-  kewlmt.aur:
-    name:
-      - i3lock-color
-      - xss-lock
+  become: true
+  community.general.pacman:
+    name: xss-lock
     state: present
+
+- name: Install i3lock-color via AUR
+  when: selected_locker == 'i3lock-color'
+  become: false
+  ansible.builtin.command:
+    cmd: yay -S --noconfirm --needed i3lock-color
+  changed_when: false
 
 # =============================================================================
 # DEPLOY LOCKER CONFIGURATION TEMPLATES
