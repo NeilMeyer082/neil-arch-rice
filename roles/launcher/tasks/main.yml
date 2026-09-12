@@ -96,12 +96,12 @@
 # =============================================================================
 # INSTALL LOGOUT MENUS
 # =============================================================================
-- name: Install wlogout (Wayland)
+- name: Install wlogout (Wayland) via AUR
   when: selected_logout_menu == 'wlogout'
-  become: true
-  community.general.pacman:
-    name: wlogout
-    state: present
+  become: false
+  ansible.builtin.command:
+    cmd: yay -S --noconfirm --needed wlogout
+  changed_when: false
 
 # =============================================================================
 # DEPLOY LOGOUT MENU CONFIGURATIONS
