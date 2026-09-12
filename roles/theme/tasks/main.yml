@@ -39,10 +39,10 @@
     name: feh
     state: present
 
-- name: Install Awww (AUR)
-  when: selected_wallpaper_daemon == "awww"
-  kewlmt.aur.aur:
-    name: awww-bin
+- name: Install SWWW via AUR
+  when: selected_wallpaper_daemon == "swww"
+  kewlmt.aur:
+    name: swww-bin
     state: present
 
 # =============================================================================
@@ -68,31 +68,31 @@
 # =============================================================================
 - name: Install Bibata Cursor Theme
   when: selected_cursor in ['bibata-ice', 'bibata-amber']
-  kewlmt.aur.aur:
+  kewlmt.aur:
     name: bibata-cursor-theme-bin
     state: present
 
 - name: Install BreezeX Cursor Theme
   when: selected_cursor == 'breezex'
-  kewlmt.aur.aur:
+  kewlmt.aur:
     name: breezex-cursor-theme
     state: present
 
 - name: Install Apple macOS Cursor Theme
   when: selected_cursor == 'apple'
-  kewlmt.aur.aur:
+  kewlmt.aur:
     name: apple-cursor-theme
     state: present
 
 - name: Install Qogir Cursor Theme
   when: selected_cursor == 'qogir'
-  kewlmt.aur.aur:
+  kewlmt.aur:
     name: qogir-cursor-theme
     state: present
 
 - name: Install Vimix Cursor Theme
   when: selected_cursor == 'vimix'
-  kewlmt.aur.aur:
+  kewlmt.aur:
     name: vimix-cursor-theme
     state: present
 
@@ -175,39 +175,39 @@
       - papirus-folders
     state: present
 
-- name: Install Tela Icon Theme (AUR)
+- name: Install Tela Icon Theme via AUR
   when: selected_icon_theme == 'tela'
-  kewlmt.aur.aur:
+  kewlmt.aur:
     name: tela-icon-theme
     state: present
 
-- name: Install Candy Icon Theme (AUR)
+- name: Install Candy Icon Theme via AUR
   when: selected_icon_theme == 'candy'
-  kewlmt.aur.aur:
+  kewlmt.aur:
     name: candy-icon-theme-git
     state: present
 
-- name: Install Colloid Icon Theme (AUR)
+- name: Install Colloid Icon Theme via AUR
   when: selected_icon_theme == 'colloid'
-  kewlmt.aur.aur:
+  kewlmt.aur:
     name: colloid-icon-theme-git
     state: present
 
-- name: Install BeautyLine Icon Theme (AUR)
+- name: Install BeautyLine Icon Theme via AUR
   when: selected_icon_theme == 'beautyline'
-  kewlmt.aur.aur:
+  kewlmt.aur:
     name: beautyline
     state: present
 
-- name: Install Qogir Icon Theme (AUR)
+- name: Install Qogir Icon Theme via AUR
   when: selected_icon_theme == 'qogir'
-  kewlmt.aur.aur:
+  kewlmt.aur:
     name: qogir-icon-theme
     state: present
 
-- name: Install Flat Remix Icon Theme (AUR)
+- name: Install Flat Remix Icon Theme via AUR
   when: selected_icon_theme == 'flat-remix'
-  kewlmt.aur.aur:
+  kewlmt.aur:
     name: flat-remix-icon-theme
     state: present
 

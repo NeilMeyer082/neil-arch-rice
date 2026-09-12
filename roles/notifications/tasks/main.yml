@@ -71,17 +71,22 @@
       - hypridle
     state: present
 
-- name: Install Swaylock-effects & Swayidle (AUR)
+- name: Install swayidle from official repository
   when: selected_locker == 'swaylock-effects'
-  kewlmt.aur.aur:
-    name:
-      - swaylock-effects-git
-      - swayidle
+  become: true
+  community.general.pacman:
+    name: swayidle
     state: present
 
-- name: Install i3lock-color & xss-lock (AUR / X11)
+- name: Install Swaylock-effects via AUR
+  when: selected_locker == 'swaylock-effects'
+  kewlmt.aur:
+    name: swaylock-effects-git
+    state: present
+
+- name: Install i3lock-color & xss-lock via AUR
   when: selected_locker == 'i3lock-color'
-  kewlmt.aur.aur:
+  kewlmt.aur:
     name:
       - i3lock-color
       - xss-lock

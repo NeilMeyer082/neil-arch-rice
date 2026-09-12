@@ -123,8 +123,12 @@
     - sway
     - i3
     - bspwm
+    - sxhkd
     - niri
     - river
+    - awesome
+    - qtile
+    - openbox
 
 - name: Deploy Hyprland config
   when: selected_wm == "hyprland"

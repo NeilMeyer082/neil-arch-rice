@@ -7,7 +7,7 @@
   community.general.pacman:
     name:
       - ttf-font-awesome
-      - ttf-nerd-fonts-symbols-2048-em
+      - ttf-nerd-fonts-symbols
       - noto-fonts-emoji
     state: present
 

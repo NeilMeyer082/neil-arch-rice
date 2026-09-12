@@ -30,19 +30,19 @@
 
 - name: Install Eww via AUR
   when: selected_bar == "eww"
-  kewlmt.aur.aur:
+  kewlmt.aur:
     name: eww
     state: present
 
 - name: Install Quickshell via AUR
   when: selected_bar == "quickshell"
-  kewlmt.aur.aur:
+  kewlmt.aur:
     name: quickshell-git
     state: present
 
 - name: Install Fabric framework dependencies via AUR
   when: selected_bar == "fabric"
-  kewlmt.aur.aur:
+  kewlmt.aur:
     name:
       - python-fabric-git
       - gtk3

@@ -9,9 +9,10 @@
     name: kitty
     state: present
 
-- name: Install Ghostty (AUR)
+- name: Install Ghostty
   when: selected_terminal == 'ghostty'
-  kewlmt.aur.aur:
+  become: true
+  community.general.pacman:
     name: ghostty
     state: present
 
@@ -39,12 +40,11 @@
 # =============================================================================
 # INSTALL SHELLS & CLI UTILITIES
 # =============================================================================
-- name: Install interactive shell, prompt, and CLI helpers
+- name: Install interactive shell and CLI helpers
   become: true
   community.general.pacman:
     name:
       - "{{ selected_shell }}"
-      - starship
       - eza
       - bat
       - fastfetch
@@ -88,12 +88,6 @@
     mode: '0644'
 
 # Shell Templates
-- name: Deploy Starship prompt config
-  ansible.builtin.template:
-    src: starship.toml.j2
-    dest: "{{ ansible_env.HOME }}/.config/starship.toml"
-    mode: '0644'
-
 - name: Deploy Zsh config
   when: selected_shell == 'zsh'
   ansible.builtin.template:
@@ -119,21 +113,22 @@
     name: starship
     state: present
 
-- name: Install Oh-My-Posh (AUR)
+- name: Install Powerlevel10k
+  when: selected_prompt == 'powerlevel10k'
+  become: true
+  community.general.pacman:
+    name: zsh-theme-powerlevel10k
+    state: present
+
+- name: Install Oh-My-Posh via AUR
   when: selected_prompt == 'oh-my-posh'
-  kewlmt.aur.aur:
+  kewlmt.aur:
     name: oh-my-posh-bin
     state: present
 
-- name: Install Powerlevel10k (AUR / Zsh)
-  when: selected_prompt == 'powerlevel10k'
-  kewlmt.aur.aur:
-    name: zsh-theme-powerlevel10k-git
-    state: present
-
-- name: Install Pure prompt (AUR / Zsh)
+- name: Install Pure prompt via AUR
   when: selected_prompt == 'pure'
-  kewlmt.aur.aur:
+  kewlmt.aur:
     name: zsh-theme-pure
     state: present
 
@@ -224,23 +219,23 @@
     name: fastfetch
     state: present
 
-- name: Install Pfetch (AUR)
-  when: selected_fetch == 'pfetch'
-  kewlmt.aur.aur:
-    name: pfetch
-    state: present
-
-- name: Install Nitch (AUR)
-  when: selected_fetch == 'nitch'
-  kewlmt.aur.aur:
-    name: nitch-bin
-    state: present
-
 - name: Install Hyfetch
   when: selected_fetch == 'hyfetch'
   become: true
   community.general.pacman:
     name: hyfetch
+    state: present
+
+- name: Install Pfetch via AUR
+  when: selected_fetch == 'pfetch'
+  kewlmt.aur:
+    name: pfetch
+    state: present
+
+- name: Install Nitch via AUR
+  when: selected_fetch == 'nitch'
+  kewlmt.aur:
+    name: nitch-bin
     state: present
 
 # =============================================================================
