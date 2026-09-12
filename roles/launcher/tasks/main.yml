@@ -94,16 +94,6 @@
     mode: '0644'
 
 # =============================================================================
-# INSTALL LOGOUT MENUS
-# =============================================================================
-- name: Install wlogout (Wayland) via AUR
-  when: selected_logout_menu == 'wlogout'
-  become: false
-  ansible.builtin.command:
-    cmd: yay -S --noconfirm --needed wlogout
-  changed_when: false
-
-# =============================================================================
 # DEPLOY LOGOUT MENU CONFIGURATIONS
 # =============================================================================
 - name: Ensure wlogout configuration directory exists
