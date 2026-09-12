@@ -3,14 +3,14 @@
 # INSTALL LAUNCHER PACKAGES
 # =============================================================================
 - name: Install Rofi (Wayland variant for Wayland compositors)
-  when: selected_launcher == 'rofi' and selected_wm in ['hyprland', 'sway', 'river', 'niri', 'qtile']
+  when: selected_launcher == 'rofi' and selected_wm in ['hyprland', 'sway', 'river', 'niri']
   become: true
   community.general.pacman:
     name: rofi-wayland
     state: present
 
 - name: Install Rofi (X11 variant for X11 WMs)
-  when: selected_launcher == 'rofi' and selected_wm in ['i3', 'bspwm', 'awesome', 'openbox']
+  when: selected_launcher == 'rofi' and selected_wm in ['i3', 'bspwm', 'awesome', 'openbox', 'qtile']
   become: true
   community.general.pacman:
     name: rofi
@@ -30,17 +30,19 @@
     name: wofi
     state: present
 
-- name: Install Ulauncher (AUR)
+- name: Install Ulauncher
   when: selected_launcher == 'ulauncher'
-  kewlmt.aur.aur:
+  become: true
+  community.general.pacman:
     name: ulauncher
     state: present
 
-- name: Install Vicinae (AUR)
+- name: Install Vicinae via AUR
   when: selected_launcher == 'vicinae'
-  kewlmt.aur.aur:
-    name: vicinae-bin
-    state: present
+  become: false
+  ansible.builtin.command:
+    cmd: yay -S --noconfirm --needed vicinae-bin
+  changed_when: false
 
 # =============================================================================
 # CONFIGURATION TEMPLATE DEPLOYMENT
@@ -87,7 +89,7 @@
 - name: Deploy Fuzzel configuration template
   when: selected_launcher == 'fuzzel'
   ansible.builtin.template:
-    src: foot.ini.j2
+    src: fuzzel.ini.j2
     dest: "{{ ansible_env.HOME }}/.config/fuzzel/fuzzel.ini"
     mode: '0644'
 
