@@ -121,15 +121,17 @@
 
 - name: Install Oh-My-Posh via AUR
   when: selected_prompt == 'oh-my-posh'
-  kewlmt.aur:
-    name: oh-my-posh-bin
-    state: present
+  become: false
+  ansible.builtin.command:
+    cmd: yay -S --noconfirm --needed oh-my-posh-bin
+  changed_when: false
 
 - name: Install Pure prompt via AUR
   when: selected_prompt == 'pure'
-  kewlmt.aur:
-    name: zsh-theme-pure
-    state: present
+  become: false
+  ansible.builtin.command:
+    cmd: yay -S --noconfirm --needed zsh-theme-pure
+  changed_when: false
 
 # =============================================================================
 # DEPLOY PROMPT CONFIGURATION TEMPLATES
@@ -225,15 +227,17 @@
 
 - name: Install Pfetch via AUR
   when: selected_fetch == 'pfetch'
-  kewlmt.aur:
-    name: pfetch
-    state: present
+  become: false
+  ansible.builtin.command:
+    cmd: yay -S --noconfirm --needed pfetch
+  changed_when: false
 
 - name: Install Nitch via AUR
   when: selected_fetch == 'nitch'
-  kewlmt.aur:
-    name: nitch-bin
-    state: present
+  become: false
+  ansible.builtin.command:
+    cmd: yay -S --noconfirm --needed nitch-bin
+  changed_when: false
 
 # =============================================================================
 # DEPLOY FASTFETCH CONFIGURATION TEMPLATES
