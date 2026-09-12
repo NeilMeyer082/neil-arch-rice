@@ -189,12 +189,29 @@
     cmd: yay -S --noconfirm --needed tela-icon-theme
   changed_when: false
 
-- name: Install Candy Icon Theme via AUR
+# Direct extraction for Candy Icons bypassing broken AUR PKGBUILDs
+- name: Ensure icons directory exists for local user icon themes
   when: selected_icon_theme == 'candy'
-  become: false
-  ansible.builtin.command:
-    cmd: yay -S --noconfirm --needed candy-icon-theme-git
-  changed_when: false
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.icons"
+    state: directory
+    mode: '0755'
+
+- name: Download and extract Candy Icon Theme directly
+  when: selected_icon_theme == 'candy'
+  ansible.builtin.unarchive:
+    src: "https://github.com/EliverLara/candy-icons/archive/refs/heads/master.zip"
+    dest: "{{ ansible_env.HOME }}/.icons/"
+    remote_src: true
+    creates: "{{ ansible_env.HOME }}/.icons/candy-icons-master"
+    mode: '0755'
+
+- name: Ensure Candy Icon Theme directory is named correctly
+  when: selected_icon_theme == 'candy'
+  ansible.builtin.file:
+    src: "{{ ansible_env.HOME }}/.icons/candy-icons-master"
+    dest: "{{ ansible_env.HOME }}/.icons/Candy-icons"
+    state: link
 
 - name: Install Colloid Icon Theme via AUR
   when: selected_icon_theme == 'colloid'
