@@ -29,9 +29,10 @@
 
 - name: Install AGS (Aylur's GTK Shell) via AUR
   when: selected_bar == "ags"
-  kewlmt.aur:
-    name: aylurs-gtk-shell
-    state: present
+  become: false
+  ansible.builtin.command:
+    cmd: yay -S --noconfirm --needed aylurs-gtk-shell
+  changed_when: false
 
 - name: Install Eww via AUR
   when: selected_bar == "eww"
