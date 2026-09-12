@@ -20,8 +20,9 @@
   community.general.pacman:
     name:
       - sway
+      - xdg-desktop-portal
       - xdg-desktop-portal-wlr
-      - xwayland
+      - xorg-xwayland
     state: present
 
 - name: Install Niri compositor
