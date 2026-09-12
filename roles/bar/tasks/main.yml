@@ -22,7 +22,7 @@
 
 - name: Install AGS (Aylur's GTK Shell) via AUR
   when: selected_bar == "ags"
-  kewlmt.aur.aur:
+  kewlmt.aur:
     name:
       - ags-hyprland-git
       - gjs
