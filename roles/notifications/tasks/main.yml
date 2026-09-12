@@ -79,9 +79,10 @@
 
 - name: Install Swaylock-effects via AUR
   when: selected_locker == 'swaylock-effects'
-  kewlmt.aur:
-    name: swaylock-effects-git
-    state: present
+  become: false
+  ansible.builtin.command:
+    cmd: yay -S --noconfirm --needed swaylock-effects-git
+  changed_when: false
 
 - name: Install i3lock-color & xss-lock via AUR
   when: selected_locker == 'i3lock-color'
