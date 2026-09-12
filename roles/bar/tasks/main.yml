@@ -20,12 +20,17 @@
       - ttf-font-awesome
     state: present
 
+- name: Install AGS dependencies from official repos
+  when: selected_bar == "ags"
+  become: true
+  community.general.pacman:
+    name: gjs
+    state: present
+
 - name: Install AGS (Aylur's GTK Shell) via AUR
   when: selected_bar == "ags"
   kewlmt.aur:
-    name:
-      - ags-hyprland-git
-      - gjs
+    name: aylurs-gtk-shell
     state: present
 
 - name: Install Eww via AUR
