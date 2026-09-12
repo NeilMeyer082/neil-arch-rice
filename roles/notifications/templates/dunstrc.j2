@@ -1,0 +1,25 @@
+# Auto-generated Dunst Config via Ansible
+[global]
+    font = {{ selected_sans_font | default('Inter') }} 10
+    corner_radius = 8
+    frame_width = 2
+    frame_color = "{{ active_colors.accent }}"
+    separator_color = frame
+    offset = 15x15
+    origin = top-right
+
+[urgency_low]
+    background = "{{ active_colors.bg }}"
+    foreground = "{{ active_colors.fg }}"
+    timeout = 5
+
+[urgency_normal]
+    background = "{{ active_colors.bg }}"
+    foreground = "{{ active_colors.fg }}"
+    timeout = 8
+
+[urgency_critical]
+    background = "{{ active_colors.bg }}"
+    foreground = "{{ active_colors.red }}"
+    frame_color = "{{ active_colors.red }}"
+    timeout = 0

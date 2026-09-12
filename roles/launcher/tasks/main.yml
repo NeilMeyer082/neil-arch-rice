@@ -1,0 +1,134 @@
+---
+# =============================================================================
+# INSTALL LAUNCHER PACKAGES
+# =============================================================================
+- name: Install Rofi (Wayland variant for Wayland compositors)
+  when: selected_launcher == 'rofi' and selected_wm in ['hyprland', 'sway', 'river', 'niri', 'qtile']
+  become: true
+  community.general.pacman:
+    name: rofi-wayland
+    state: present
+
+- name: Install Rofi (X11 variant for X11 WMs)
+  when: selected_launcher == 'rofi' and selected_wm in ['i3', 'bspwm', 'awesome', 'openbox']
+  become: true
+  community.general.pacman:
+    name: rofi
+    state: present
+
+- name: Install Fuzzel
+  when: selected_launcher == 'fuzzel'
+  become: true
+  community.general.pacman:
+    name: fuzzel
+    state: present
+
+- name: Install Wofi
+  when: selected_launcher == 'wofi'
+  become: true
+  community.general.pacman:
+    name: wofi
+    state: present
+
+- name: Install Ulauncher (AUR)
+  when: selected_launcher == 'ulauncher'
+  kewlmt.aur.aur:
+    name: ulauncher
+    state: present
+
+- name: Install Vicinae (AUR)
+  when: selected_launcher == 'vicinae'
+  kewlmt.aur.aur:
+    name: vicinae-bin
+    state: present
+
+# =============================================================================
+# CONFIGURATION TEMPLATE DEPLOYMENT
+# =============================================================================
+- name: Ensure target launcher directories exist
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.config/{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - rofi
+    - fuzzel
+    - wofi
+
+- name: Ensure bin directory exists for helper scripts
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.local/bin"
+    state: directory
+    mode: '0755'
+
+# Rofi Templates
+- name: Deploy Rofi configuration template
+  when: selected_launcher == 'rofi'
+  ansible.builtin.template:
+    src: rofi.config.rasi.j2
+    dest: "{{ ansible_env.HOME }}/.config/rofi/config.rasi"
+    mode: '0644'
+
+- name: Deploy Rofi dynamic color palette
+  when: selected_launcher == 'rofi'
+  ansible.builtin.template:
+    src: rofi.colors.rasi.j2
+    dest: "{{ ansible_env.HOME }}/.config/rofi/colors.rasi"
+    mode: '0644'
+
+- name: Deploy Rofi Power Menu helper script
+  when: selected_launcher == 'rofi'
+  ansible.builtin.template:
+    src: rofi-powermenu.sh.j2
+    dest: "{{ ansible_env.HOME }}/.local/bin/rofi-powermenu"
+    mode: '0755'
+
+# Fuzzel Templates
+- name: Deploy Fuzzel configuration template
+  when: selected_launcher == 'fuzzel'
+  ansible.builtin.template:
+    src: foot.ini.j2
+    dest: "{{ ansible_env.HOME }}/.config/fuzzel/fuzzel.ini"
+    mode: '0644'
+
+---
+# =============================================================================
+# INSTALL LOGOUT MENUS
+# =============================================================================
+- name: Install wlogout (Wayland)
+  when: selected_logout_menu == 'wlogout'
+  become: true
+  community.general.pacman:
+    name: wlogout
+    state: present
+
+# =============================================================================
+# DEPLOY LOGOUT MENU CONFIGURATIONS
+# =============================================================================
+- name: Ensure wlogout configuration directory exists
+  when: selected_logout_menu == 'wlogout'
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.config/wlogout"
+    state: directory
+    mode: '0755'
+
+- name: Deploy wlogout layout configuration
+  when: selected_logout_menu == 'wlogout'
+  ansible.builtin.template:
+    src: wlogout.layout.j2
+    dest: "{{ ansible_env.HOME }}/.config/wlogout/layout"
+    mode: '0644'
+
+- name: Deploy wlogout stylesheet (CSS)
+  when: selected_logout_menu == 'wlogout'
+  ansible.builtin.template:
+    src: wlogout.css.j2
+    dest: "{{ ansible_env.HOME }}/.config/wlogout/style.css"
+    mode: '0644'
+
+- name: Deploy Rofi Power Menu script
+  when: selected_logout_menu == 'rofi'
+  ansible.builtin.template:
+    src: rofi-powermenu.sh.j2
+    dest: "{{ ansible_env.HOME }}/.local/bin/rofi-powermenu"
+    mode: '0755'

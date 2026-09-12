@@ -1,0 +1,36 @@
+# Auto-generated Hyprlock Configuration via Ansible
+
+background {
+    monitor =
+    path = {{ ansible_env.HOME }}/Pictures/Wallpapers/default.png
+    blur_passes = 2
+    blur_size = 7
+}
+
+input-field {
+    monitor =
+    size = 250, 50
+    outline_thickness = 3
+    dots_size = 0.33
+    dots_spacing = 0.15
+    outer_color = rgb({{ active_colors.accent | replace('#', '') }})
+    inner_color = rgb({{ active_colors.bg | replace('#', '') }})
+    font_color = rgb({{ active_colors.fg | replace('#', '') }})
+    fade_on_empty = false
+    placeholder_text = <span foreground="##{{ active_colors.fg | replace('#', '') }}">Enter Password...</span>
+    hide_input = false
+    position = 0, -20
+    halign = center
+    valign = center
+}
+
+label {
+    monitor =
+    text = $TIME
+    color = rgb({{ active_colors.accent | replace('#', '') }})
+    font_size = 64
+    font_family = {{ selected_mono_font | default('JetBrainsMono Nerd Font') }}
+    position = 0, 80
+    halign = center
+    valign = center
+}

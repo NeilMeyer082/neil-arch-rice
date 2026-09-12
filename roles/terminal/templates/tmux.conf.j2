@@ -1,0 +1,35 @@
+# Auto-generated .tmux.conf via Ansible
+
+# Enable True Color & Mouse
+set -g default-terminal "screen-256color"
+set -ga terminal-overrides ",*256col*:Tc"
+set -g mouse on
+
+# Start window indexing at 1
+set -g base-index 1
+set -g pane-base-index 1
+set-window-option -g pane-base-index 1
+set-option -g renumber-windows on
+
+# Reload keybinding
+bind r source-file ~/.tmux.conf \; display "Reloaded!"
+
+# Status Bar Styling
+set -g status-style "bg={{ active_colors.bg }},fg={{ active_colors.fg }}"
+set -g status-left-length 40
+set -g status-left "#[fg={{ active_colors.bg }},bg={{ active_colors.accent }},bold] #S #[bg={{ active_colors.bg }},fg={{ active_colors.accent }}]"
+set -g status-right "#[fg={{ active_colors.accent }}]#[fg={{ active_colors.bg }},bg={{ active_colors.accent }},bold] %H:%M %d-%b-%y "
+
+set -g window-status-current-format "#[fg={{ active_colors.accent }},bold] #I:#W#F "
+set -g window-status-format "#[fg={{ active_colors.fg }},dim] #I:#W#F "
+
+# Pane Borders
+set -g pane-border-style "fg={{ active_colors.bg }}"
+set -g pane-active-border-style "fg={{ active_colors.accent }}"
+
+# TPM Plugins
+set -g @plugin 'tmux-plugins/tpm'
+set -g @plugin 'tmux-plugins/tmux-sensible'
+set -g @plugin 'tmux-plugins/tmux-yank'
+
+run '~/.tmux/plugins/tpm/tpm'

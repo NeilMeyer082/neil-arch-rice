@@ -1,0 +1,90 @@
+---
+# =============================================================================
+# INSTALLATION TASKS
+# =============================================================================
+- name: Install Waybar
+  when: selected_bar == "waybar"
+  become: true
+  community.general.pacman:
+    name:
+      - waybar
+      - otf-font-awesome
+    state: present
+
+- name: Install Polybar
+  when: selected_bar == "polybar"
+  become: true
+  community.general.pacman:
+    name:
+      - polybar
+      - ttf-font-awesome
+    state: present
+
+- name: Install AGS (Aylur's GTK Shell) via AUR
+  when: selected_bar == "ags"
+  kewlmt.aur.aur:
+    name:
+      - ags-hyprland-git
+      - gjs
+    state: present
+
+- name: Install Eww via AUR
+  when: selected_bar == "eww"
+  kewlmt.aur.aur:
+    name: eww
+    state: present
+
+- name: Install Quickshell via AUR
+  when: selected_bar == "quickshell"
+  kewlmt.aur.aur:
+    name: quickshell-git
+    state: present
+
+- name: Install Fabric framework dependencies via AUR
+  when: selected_bar == "fabric"
+  kewlmt.aur.aur:
+    name:
+      - python-fabric-git
+      - gtk3
+      - gtk4
+    state: present
+
+# =============================================================================
+# CONFIGURATION TEMPLATE DEPLOYMENT
+# =============================================================================
+- name: Ensure bar configuration directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.config/{{ selected_bar }}"
+    state: directory
+    mode: '0755'
+  when: selected_bar not in ["none", "fabric"]
+
+- name: Ensure fabric configuration directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.config/fabric"
+    state: directory
+    mode: '0755'
+  when: selected_bar == "fabric"
+
+# Waybar Templates
+- name: Deploy Waybar config (JSONC)
+  when: selected_bar == "waybar"
+  ansible.builtin.template:
+    src: waybar.jsonc.j2
+    dest: "{{ ansible_env.HOME }}/.config/waybar/config.jsonc"
+    mode: '0644'
+
+- name: Deploy Waybar style (CSS)
+  when: selected_bar == "waybar"
+  ansible.builtin.template:
+    src: waybar.css.j2
+    dest: "{{ ansible_env.HOME }}/.config/waybar/style.css"
+    mode: '0644'
+
+# Polybar Templates
+- name: Deploy Polybar config (INI)
+  when: selected_bar == "polybar"
+  ansible.builtin.template:
+    src: polybar.ini.j2
+    dest: "{{ ansible_env.HOME }}/.config/polybar/config.ini"
+    mode: '0644'

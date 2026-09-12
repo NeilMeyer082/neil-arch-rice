@@ -1,0 +1,21 @@
+---
+- name: Apply Desktop Customization & Rice
+  hosts: localhost
+  connection: local
+  become: false
+
+  vars_files:
+    - vars/user_choices.yml
+
+  vars:
+    # Sets active_colors based on selected_theme key
+    active_colors: "{{ themes[selected_theme] }}"
+
+  roles:
+    - role: core
+    - role: desktop
+    - role: bar
+    - role: launcher
+    - role: notifications
+    - role: terminal
+    - role: theme

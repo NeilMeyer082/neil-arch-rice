@@ -1,0 +1,29 @@
+/* Auto-generated SwayNC Style via Ansible */
+@define-color bg     {{ active_colors.bg }};
+@define-color fg     {{ active_colors.fg }};
+@define-color accent {{ active_colors.accent }};
+@define-color red    {{ active_colors.red }};
+
+* {
+    font-family: "{{ selected_sans_font | default('Inter') }}", sans-serif;
+    font-size: 13px;
+}
+
+.notification {
+    background-color: @bg;
+    color: @fg;
+    border: 2px solid @accent;
+    border-radius: 8px;
+    padding: 10px;
+}
+
+.control-center {
+    background-color: @bg;
+    color: @fg;
+    border-left: 2px solid @accent;
+}
+
+.widget-title {
+    color: @accent;
+    font-weight: bold;
+}

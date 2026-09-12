@@ -1,0 +1,35 @@
+# Auto-generated Starship Config via Ansible
+
+format = """
+[░▒▓]({{ active_colors.accent }})\
+$os\
+$username\
+[](bg:{{ active_colors.blue }} fg:{{ active_colors.accent }})\
+$directory\
+[](fg:{{ active_colors.blue }} bg:{{ active_colors.magenta }})\
+$git_branch\
+$git_status\
+[](fg:{{ active_colors.magenta }} bg:{{ active_colors.bg }})\
+$character"""
+
+# Directory module
+[directory]
+style = "bg:{{ active_colors.blue }} fg:{{ active_colors.bg }}"
+format = "[ $path ]($style)"
+truncation_length = 3
+
+# Git branch module
+[git_branch]
+symbol = " "
+style = "bg:{{ active_colors.magenta }} fg:{{ active_colors.bg }}"
+format = '[ $symbol$branch ]($style)'
+
+# Git status module
+[git_status]
+style = "bg:{{ active_colors.magenta }} fg:{{ active_colors.bg }}"
+format = '[$all_status$ahead_behind ]($style)'
+
+# Character prompt
+[character]
+success_symbol = "[❯](bold {{ active_colors.accent }})"
+error_symbol = "[❯](bold {{ active_colors.red }})"

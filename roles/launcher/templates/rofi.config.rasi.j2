@@ -1,0 +1,27 @@
+/* Auto-generated Rofi Config via Ansible */
+configuration {
+    modi:                       "drun,run,window";
+    show-icons:                 true;
+    icon-theme:                 "{{ icon_theme_name | default('Papirus-Dark') }}";
+    display-drun:               " Apps";
+    display-run:                " Run";
+    display-window:             " Windows";
+    drun-display-format:        "{name}";
+    font:                       "{{ selected_sans_font | default('Inter') }} 11";
+}
+
+@import "colors.rasi"
+
+window {
+    width:                      35%;
+    border:                     2px;
+    border-color:               @accent;
+    border-radius:              8px;
+    padding:                    15px;
+}
+
+element selected {
+    background-color:           @accent;
+    text-color:                 @bg;
+    border-radius:              4px;
+}

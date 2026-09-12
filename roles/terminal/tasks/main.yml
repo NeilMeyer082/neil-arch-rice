@@ -1,0 +1,261 @@
+---
+# =============================================================================
+# INSTALL TERMINAL EMULATORS
+# =============================================================================
+- name: Install Kitty
+  when: selected_terminal == 'kitty'
+  become: true
+  community.general.pacman:
+    name: kitty
+    state: present
+
+- name: Install Ghostty (AUR)
+  when: selected_terminal == 'ghostty'
+  kewlmt.aur.aur:
+    name: ghostty
+    state: present
+
+- name: Install Foot
+  when: selected_terminal == 'foot'
+  become: true
+  community.general.pacman:
+    name: foot
+    state: present
+
+- name: Install Alacritty
+  when: selected_terminal == 'alacritty'
+  become: true
+  community.general.pacman:
+    name: alacritty
+    state: present
+
+- name: Install WezTerm
+  when: selected_terminal == 'wezterm'
+  become: true
+  community.general.pacman:
+    name: wezterm
+    state: present
+
+# =============================================================================
+# INSTALL SHELLS & CLI UTILITIES
+# =============================================================================
+- name: Install interactive shell, prompt, and CLI helpers
+  become: true
+  community.general.pacman:
+    name:
+      - "{{ selected_shell }}"
+      - starship
+      - eza
+      - bat
+      - fastfetch
+      - zoxide
+    state: present
+
+- name: Set user login shell
+  become: true
+  ansible.builtin.user:
+    name: "{{ ansible_env.USER }}"
+    shell: "/usr/bin/{{ selected_shell }}"
+
+# =============================================================================
+# DEPLOY TERMINAL & SHELL TEMPLATES
+# =============================================================================
+- name: Ensure configuration directories exist
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.config/{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - kitty
+    - foot
+    - alacritty
+    - ghostty
+    - fish
+
+# Terminal Templates
+- name: Deploy Kitty config
+  when: selected_terminal == 'kitty'
+  ansible.builtin.template:
+    src: kitty.conf.j2
+    dest: "{{ ansible_env.HOME }}/.config/kitty/kitty.conf"
+    mode: '0644'
+
+- name: Deploy Foot config
+  when: selected_terminal == 'foot'
+  ansible.builtin.template:
+    src: foot.ini.j2
+    dest: "{{ ansible_env.HOME }}/.config/foot/foot.ini"
+    mode: '0644'
+
+# Shell Templates
+- name: Deploy Starship prompt config
+  ansible.builtin.template:
+    src: starship.toml.j2
+    dest: "{{ ansible_env.HOME }}/.config/starship.toml"
+    mode: '0644'
+
+- name: Deploy Zsh config
+  when: selected_shell == 'zsh'
+  ansible.builtin.template:
+    src: zshrc.j2
+    dest: "{{ ansible_env.HOME }}/.zshrc"
+    mode: '0644'
+
+- name: Deploy Fish config
+  when: selected_shell == 'fish'
+  ansible.builtin.template:
+    src: config.fish.j2
+    dest: "{{ ansible_env.HOME }}/.config/fish/config.fish"
+    mode: '0644'
+
+---
+# =============================================================================
+# INSTALL PROMPT ENGINES
+# =============================================================================
+- name: Install Starship
+  when: selected_prompt == 'starship'
+  become: true
+  community.general.pacman:
+    name: starship
+    state: present
+
+- name: Install Oh-My-Posh (AUR)
+  when: selected_prompt == 'oh-my-posh'
+  kewlmt.aur.aur:
+    name: oh-my-posh-bin
+    state: present
+
+- name: Install Powerlevel10k (AUR / Zsh)
+  when: selected_prompt == 'powerlevel10k'
+  kewlmt.aur.aur:
+    name: zsh-theme-powerlevel10k-git
+    state: present
+
+- name: Install Pure prompt (AUR / Zsh)
+  when: selected_prompt == 'pure'
+  kewlmt.aur.aur:
+    name: zsh-theme-pure
+    state: present
+
+# =============================================================================
+# DEPLOY PROMPT CONFIGURATION TEMPLATES
+# =============================================================================
+- name: Ensure prompt configuration directories exist
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.config/{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - oh-my-posh
+
+- name: Deploy Starship prompt configuration
+  when: selected_prompt == 'starship'
+  ansible.builtin.template:
+    src: starship.toml.j2
+    dest: "{{ ansible_env.HOME }}/.config/starship.toml"
+    mode: '0644'
+
+- name: Deploy Oh-My-Posh configuration template
+  when: selected_prompt == 'oh-my-posh'
+  ansible.builtin.template:
+    src: omp.json.j2
+    dest: "{{ ansible_env.HOME }}/.config/oh-my-posh/zen.json"
+    mode: '0644'
+
+---
+# =============================================================================
+# INSTALL TERMINAL MULTIPLEXERS
+# =============================================================================
+- name: Install tmux and xclip
+  when: selected_multiplexer == 'tmux'
+  become: true
+  community.general.pacman:
+    name:
+      - tmux
+      - xclip
+    state: present
+
+- name: Install TPM (Tmux Plugin Manager)
+  when: selected_multiplexer == 'tmux'
+  ansible.builtin.git:
+    repo: 'https://github.com/tmux-plugins/tpm'
+    dest: "{{ ansible_env.HOME }}/.tmux/plugins/tpm"
+    depth: 1
+
+- name: Install Zellij
+  when: selected_multiplexer == 'zellij'
+  become: true
+  community.general.pacman:
+    name: zellij
+    state: present
+
+# =============================================================================
+# DEPLOY MULTIPLEXER CONFIGURATIONS
+# =============================================================================
+- name: Ensure Zellij configuration directory exists
+  when: selected_multiplexer == 'zellij'
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.config/zellij"
+    state: directory
+    mode: '0755'
+
+- name: Deploy tmux configuration
+  when: selected_multiplexer == 'tmux'
+  ansible.builtin.template:
+    src: tmux.conf.j2
+    dest: "{{ ansible_env.HOME }}/.tmux.conf"
+    mode: '0644'
+
+- name: Deploy Zellij configuration
+  when: selected_multiplexer == 'zellij'
+  ansible.builtin.template:
+    src: zellij.kdl.j2
+    dest: "{{ ansible_env.HOME }}/.config/zellij/config.kdl"
+    mode: '0644'
+
+---
+# =============================================================================
+# INSTALL FETCH UTILITIES
+# =============================================================================
+- name: Install Fastfetch
+  when: selected_fetch == 'fastfetch'
+  become: true
+  community.general.pacman:
+    name: fastfetch
+    state: present
+
+- name: Install Pfetch (AUR)
+  when: selected_fetch == 'pfetch'
+  kewlmt.aur.aur:
+    name: pfetch
+    state: present
+
+- name: Install Nitch (AUR)
+  when: selected_fetch == 'nitch'
+  kewlmt.aur.aur:
+    name: nitch-bin
+    state: present
+
+- name: Install Hyfetch
+  when: selected_fetch == 'hyfetch'
+  become: true
+  community.general.pacman:
+    name: hyfetch
+    state: present
+
+# =============================================================================
+# DEPLOY FASTFETCH CONFIGURATION TEMPLATES
+# =============================================================================
+- name: Ensure Fastfetch configuration directory exists
+  when: selected_fetch == 'fastfetch'
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.config/fastfetch"
+    state: directory
+    mode: '0755'
+
+- name: Deploy Fastfetch config template (JSONC)
+  when: selected_fetch == 'fastfetch'
+  ansible.builtin.template:
+    src: fastfetch.jsonc.j2
+    dest: "{{ ansible_env.HOME }}/.config/fastfetch/config.jsonc"
+    mode: '0644'

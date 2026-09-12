@@ -1,0 +1,22 @@
+// Auto-generated Zellij Config via Ansible
+
+theme "custom_theme"
+default_layout "compact"
+mouse_mode true
+copy_on_select true
+
+themes {
+    custom_theme {
+        bg "{{ active_colors.bg }}"
+        fg "{{ active_colors.fg }}"
+        black "{{ active_colors.bg }}"
+        red "{{ active_colors.red }}"
+        green "{{ active_colors.green }}"
+        yellow "{{ active_colors.yellow }}"
+        blue "{{ active_colors.accent }}"
+        magenta "{{ active_colors.magenta }}"
+        cyan "{{ active_colors.cyan }}"
+        white "{{ active_colors.fg }}"
+        orange "{{ active_colors.yellow }}"
+    }
+}

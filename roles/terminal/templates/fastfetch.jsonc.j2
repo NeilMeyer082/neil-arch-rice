@@ -1,0 +1,59 @@
+// Auto-generated Fastfetch Configuration via Ansible
+{
+  "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+  "logo": {
+    "padding": {
+      "top": 2,
+      "left": 1
+    }
+  },
+  "display": {
+    "separator": " ➜ "
+  },
+  "modules": [
+    "title",
+    "separator",
+    {
+      "type": "os",
+      "key": "OS",
+      "keyColor": "{{ active_colors.accent }}"
+    },
+    {
+      "type": "host",
+      "key": "Host",
+      "keyColor": "{{ active_colors.blue }}"
+    },
+    {
+      "type": "kernel",
+      "key": "Kernel",
+      "keyColor": "{{ active_colors.green }}"
+    },
+    {
+      "type": "uptime",
+      "key": "Uptime",
+      "keyColor": "{{ active_colors.yellow }}"
+    },
+    {
+      "type": "wm",
+      "key": "WM",
+      "keyColor": "{{ active_colors.accent }}"
+    },
+    {
+      "type": "terminal",
+      "key": "Terminal",
+      "keyColor": "{{ active_colors.magenta }}"
+    },
+    {
+      "type": "cpu",
+      "key": "CPU",
+      "keyColor": "{{ active_colors.cyan }}"
+    },
+    {
+      "type": "memory",
+      "key": "Memory",
+      "keyColor": "{{ active_colors.red }}"
+    },
+    "break",
+    "colors"
+  ]
+}

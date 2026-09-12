@@ -1,0 +1,215 @@
+---
+# =============================================================================
+# INSTALL ICON GLYPH & FALLBACK FONTS (REQUIRED FOR ALL RICES)
+# =============================================================================
+- name: Install universal icon glyph fallbacks and emoji fonts
+  become: true
+  community.general.pacman:
+    name:
+      - ttf-font-awesome
+      - ttf-nerd-fonts-symbols-2048-em
+      - noto-fonts-emoji
+    state: present
+
+# =============================================================================
+# INSTALL SANS-SERIF UI FONTS
+# =============================================================================
+- name: Install Inter font
+  when: selected_sans_font == "inter"
+  become: true
+  community.general.pacman:
+    name: ttf-inter
+    state: present
+
+- name: Install Roboto font
+  when: selected_sans_font == "roboto"
+  become: true
+  community.general.pacman:
+    name: ttf-roboto
+    state: present
+
+- name: Install Ubuntu font family
+  when: selected_sans_font == "ubuntu"
+  become: true
+  community.general.pacman:
+    name: ttf-ubuntu-font-family
+    state: present
+
+- name: Install Open Sans font
+  when: selected_sans_font == "open-sans"
+  become: true
+  community.general.pacman:
+    name: ttf-opensans
+    state: present
+
+- name: Install DejaVu Sans font
+  when: selected_sans_font == "dejavu-sans"
+  become: true
+  community.general.pacman:
+    name: ttf-dejavu
+    state: present
+
+# =============================================================================
+# INSTALL MONOSPACE / NERD FONTS WITH LIGATURES
+# =============================================================================
+- name: Install JetBrains Mono Nerd Font
+  when: selected_mono_font == "jetbrains"
+  become: true
+  community.general.pacman:
+    name: ttf-jetbrains-mono-nerd
+    state: present
+
+- name: Install Fira Code Nerd Font
+  when: selected_mono_font == "firacode"
+  become: true
+  community.general.pacman:
+    name: ttf-firacode-nerd
+    state: present
+
+- name: Install Cascadia Code Nerd Font
+  when: selected_mono_font == "cascadia"
+  become: true
+  community.general.pacman:
+    name: ttf-cascadia-code-nerd
+    state: present
+
+- name: Install Iosevka Nerd Font
+  when: selected_mono_font == "iosevka"
+  become: true
+  community.general.pacman:
+    name: ttf-iosevka-nerd
+    state: present
+
+- name: Install Victor Mono Nerd Font
+  when: selected_mono_font == "victor"
+  become: true
+  community.general.pacman:
+    name: ttf-victor-mono-nerd
+    state: present
+
+- name: Install DejaVu Sans Mono Nerd Font
+  when: selected_mono_font == "dejavu"
+  become: true
+  community.general.pacman:
+    name: ttf-dejavu-nerd
+    state: present
+
+# =============================================================================
+# REBUILD SYSTEM FONT CACHE & DEPLOY DYNAMIC FONTCONFIG
+# =============================================================================
+- name: Rebuild font cache
+  ansible.builtin.command: fc-cache -fv
+  changed_when: false
+
+- name: Ensure fontconfig user directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.config/fontconfig"
+    state: directory
+    mode: '0755'
+
+- name: Deploy dynamic fontconfig fallback rules
+  ansible.builtin.copy:
+    dest: "{{ ansible_env.HOME }}/.config/fontconfig/fonts.conf"
+    content: |
+      <?xml version="1.0"?>
+      <!DOCTYPE fontconfig SYSTEM "fonts.dtd">
+      <fontconfig>
+        <alias>
+          <family>sans-serif</family>
+          <prefer>
+            <family>{{ selected_sans_font | default('Inter') }}</family>
+            <family>Symbols Nerd Font</family>
+            <family>Font Awesome 6 Free</family>
+          </prefer>
+        </alias>
+        <alias>
+          <family>monospace</family>
+          <prefer>
+            <family>{{ selected_mono_font | default('JetBrainsMono Nerd Font') }}</family>
+            <family>Symbols Nerd Font</family>
+          </prefer>
+        </alias>
+      </fontconfig>
+    mode: '0644'
+
+# =============================================================================
+# INSTALL FILE MANAGERS & THUMBNAIL PREVIEW ENGINES
+# =============================================================================
+- name: Install thumbnail preview backends for image and video files
+  become: true
+  community.general.pacman:
+    name:
+      - tumbler
+      - ffmpegthumbnailer
+      - poppler-glib
+      - freetype2
+    state: present
+
+- name: Install Thunar and archive integrations
+  when: selected_file_manager == 'thunar'
+  become: true
+  community.general.pacman:
+    name:
+      - thunar
+      - thunar-archive-plugin
+      - thunar-volman
+      - file-roller
+    state: present
+
+- name: Install Nemo
+  when: selected_file_manager == 'nemo'
+  become: true
+  community.general.pacman:
+    name:
+      - nemo
+      - file-roller
+    state: present
+
+- name: Install Nautilus
+  when: selected_file_manager == 'nautilus'
+  become: true
+  community.general.pacman:
+    name:
+      - nautilus
+      - file-roller
+    state: present
+
+- name: Install Dolphin
+  when: selected_file_manager == 'dolphin'
+  become: true
+  community.general.pacman:
+    name:
+      - dolphin
+      - kio-extras
+      - ark
+    state: present
+
+- name: Install PCManFM
+  when: selected_file_manager == 'pcmanfm'
+  become: true
+  community.general.pacman:
+    name:
+      - pcmanfm
+      - file-roller
+    state: present
+
+# =============================================================================
+# DEPLOY STANDARD GTK BOOKMARKS
+# =============================================================================
+- name: Ensure GTK configuration directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.config/gtk-3.0"
+    state: directory
+    mode: '0755'
+
+- name: Deploy GTK 3.0 bookmarks for file managers
+  ansible.builtin.copy:
+    dest: "{{ ansible_env.HOME }}/.config/gtk-3.0/bookmarks"
+    content: |
+      file://{{ ansible_env.HOME }}/Downloads Downloads
+      file://{{ ansible_env.HOME }}/Documents Documents
+      file://{{ ansible_env.HOME }}/Pictures Pictures
+      file://{{ ansible_env.HOME }}/Pictures/Wallpapers Wallpapers
+      file://{{ ansible_env.HOME }}/Videos Videos
+      file://{{ ansible_env.HOME }}/Music Music
+    mode: '0644'

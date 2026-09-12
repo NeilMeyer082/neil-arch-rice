@@ -1,0 +1,262 @@
+---
+# =============================================================================
+# WALLPAPER DOWNLOAD & REPOSITORY SYNC
+# =============================================================================
+- name: Ensure Wallpapers directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/Pictures/Wallpapers"
+    state: directory
+    mode: '0755'
+
+- name: Clone theme-matched wallpaper repository
+  ansible.builtin.git:
+    repo: "{{ active_colors.wallpaper_repo }}"
+    dest: "{{ ansible_env.HOME }}/Pictures/Wallpapers"
+    depth: 1
+    single_branch: true
+
+# =============================================================================
+# INSTALL WALLPAPER DAEMONS
+# =============================================================================
+- name: Install Hyprpaper
+  when: selected_wallpaper_daemon == "hyprpaper"
+  become: true
+  community.general.pacman:
+    name: hyprpaper
+    state: present
+
+- name: Install Swaybg
+  when: selected_wallpaper_daemon == "swaybg"
+  become: true
+  community.general.pacman:
+    name: swaybg
+    state: present
+
+- name: Install Feh (X11)
+  when: selected_wallpaper_daemon == "feh"
+  become: true
+  community.general.pacman:
+    name: feh
+    state: present
+
+- name: Install Awww (AUR)
+  when: selected_wallpaper_daemon == "awww"
+  kewlmt.aur.aur:
+    name: awww-bin
+    state: present
+
+# =============================================================================
+# DEPLOY WALLPAPER DAEMON CONFIGURATIONS
+# =============================================================================
+- name: Ensure hyprpaper directory exists
+  when: selected_wallpaper_daemon == "hyprpaper"
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.config/hypr"
+    state: directory
+    mode: '0755'
+
+- name: Deploy hyprpaper config template
+  when: selected_wallpaper_daemon == "hyprpaper"
+  ansible.builtin.template:
+    src: hyprpaper.conf.j2
+    dest: "{{ ansible_env.HOME }}/.config/hypr/hyprpaper.conf"
+    mode: '0644'
+
+---
+# =============================================================================
+# INSTALL CURSOR PACKAGES VIA AUR
+# =============================================================================
+- name: Install Bibata Cursor Theme
+  when: selected_cursor in ['bibata-ice', 'bibata-amber']
+  kewlmt.aur.aur:
+    name: bibata-cursor-theme-bin
+    state: present
+
+- name: Install BreezeX Cursor Theme
+  when: selected_cursor == 'breezex'
+  kewlmt.aur.aur:
+    name: breezex-cursor-theme
+    state: present
+
+- name: Install Apple macOS Cursor Theme
+  when: selected_cursor == 'apple'
+  kewlmt.aur.aur:
+    name: apple-cursor-theme
+    state: present
+
+- name: Install Qogir Cursor Theme
+  when: selected_cursor == 'qogir'
+  kewlmt.aur.aur:
+    name: qogir-cursor-theme
+    state: present
+
+- name: Install Vimix Cursor Theme
+  when: selected_cursor == 'vimix'
+  kewlmt.aur.aur:
+    name: vimix-cursor-theme
+    state: present
+
+- name: Install Hyprcursor utilities (Hyprland only)
+  when: selected_wm == 'hyprland'
+  become: true
+  community.general.pacman:
+    name: hyprcursor
+    state: present
+
+# =============================================================================
+# MAP CURSOR SELECTION TO INTERNAL THEME NAMES
+# =============================================================================
+- name: Set cursor theme name fact
+  ansible.builtin.set_fact:
+    cursor_name: >-
+      {% if selected_cursor == 'bibata-ice' %}Bibata-Modern-Ice
+      {% elif selected_cursor == 'bibata-amber' %}Bibata-Modern-Amber
+      {% elif selected_cursor == 'breezex' %}BreezeX-Light
+      {% elif selected_cursor == 'apple' %}macOS-Monterey
+      {% elif selected_cursor == 'qogir' %}Qogir-cursors
+      {% elif selected_cursor == 'vimix' %}Vimix-cursors
+      {% else %}Bibata-Modern-Ice{% endif %}
+
+# =============================================================================
+# DEPLOY GTK & X11 CURSOR FALLBACK CONFIGURATIONS
+# =============================================================================
+- name: Ensure icon and GTK config directories exist
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - "{{ ansible_env.HOME }}/.icons/default"
+    - "{{ ansible_env.HOME }}/.config/gtk-3.0"
+    - "{{ ansible_env.HOME }}/.config/gtk-4.0"
+
+- name: Deploy X11 / XWayland default cursor fallback
+  ansible.builtin.copy:
+    dest: "{{ ansible_env.HOME }}/.icons/default/index.theme"
+    content: |
+      [Icon Theme]
+      Name=Default
+      Comment=Default Cursor Theme
+      Inherits={{ cursor_name | trim }}
+    mode: '0644'
+
+- name: Configure GTK 3.0 cursor settings
+  ansible.builtin.ini_file:
+    path: "{{ ansible_env.HOME }}/.config/gtk-3.0/settings.ini"
+    section: Settings
+    option: "{{ item.option }}"
+    value: "{{ item.value }}"
+    mode: '0644'
+  loop:
+    - { option: 'gtk-cursor-theme-name', value: "{{ cursor_name | trim }}" }
+    - { option: 'gtk-cursor-theme-size', value: '24' }
+
+- name: Configure GTK 4.0 cursor settings
+  ansible.builtin.ini_file:
+    path: "{{ ansible_env.HOME }}/.config/gtk-4.0/settings.ini"
+    section: Settings
+    option: "{{ item.option }}"
+    value: "{{ item.value }}"
+    mode: '0644'
+  loop:
+    - { option: 'gtk-cursor-theme-name', value: "{{ cursor_name | trim }}" }
+    - { option: 'gtk-cursor-theme-size', value: '24' }
+
+---
+# =============================================================================
+# INSTALL ICON THEMES
+# =============================================================================
+- name: Install Papirus Icon Theme and papirus-folders
+  when: selected_icon_theme == 'papirus'
+  become: true
+  community.general.pacman:
+    name:
+      - papirus-icon-theme
+      - papirus-folders
+    state: present
+
+- name: Install Tela Icon Theme (AUR)
+  when: selected_icon_theme == 'tela'
+  kewlmt.aur.aur:
+    name: tela-icon-theme
+    state: present
+
+- name: Install Candy Icon Theme (AUR)
+  when: selected_icon_theme == 'candy'
+  kewlmt.aur.aur:
+    name: candy-icon-theme-git
+    state: present
+
+- name: Install Colloid Icon Theme (AUR)
+  when: selected_icon_theme == 'colloid'
+  kewlmt.aur.aur:
+    name: colloid-icon-theme-git
+    state: present
+
+- name: Install BeautyLine Icon Theme (AUR)
+  when: selected_icon_theme == 'beautyline'
+  kewlmt.aur.aur:
+    name: beautyline
+    state: present
+
+- name: Install Qogir Icon Theme (AUR)
+  when: selected_icon_theme == 'qogir'
+  kewlmt.aur.aur:
+    name: qogir-icon-theme
+    state: present
+
+- name: Install Flat Remix Icon Theme (AUR)
+  when: selected_icon_theme == 'flat-remix'
+  kewlmt.aur.aur:
+    name: flat-remix-icon-theme
+    state: present
+
+# =============================================================================
+# MAP SELECTION TO INTERNAL GTK ICON NAME
+# =============================================================================
+- name: Set icon theme name fact
+  ansible.builtin.set_fact:
+    icon_theme_name: >-
+      {% if selected_icon_theme == 'papirus' %}Papirus-Dark
+      {% elif selected_icon_theme == 'tela' %}Tela-dark
+      {% elif selected_icon_theme == 'candy' %}Candy-icons
+      {% elif selected_icon_theme == 'colloid' %}Colloid-dark
+      {% elif selected_icon_theme == 'beautyline' %}BeautyLine
+      {% elif selected_icon_theme == 'qogir' %}Qogir-dark
+      {% elif selected_icon_theme == 'flat-remix' %}Flat-Remix-Dark
+      {% else %}Papirus-Dark{% endif %}
+
+# =============================================================================
+# RECOLOR PAPIRUS FOLDERS TO MATCH SYSTEM COLOR SCHEME
+# =============================================================================
+- name: Apply theme-matched Papirus folder color
+  when: selected_icon_theme == 'papirus'
+  ansible.builtin.command:
+    cmd: >-
+      papirus-folders -c
+      {% if selected_theme in ['catppuccin-mocha', 'catppuccin-latte'] %}catppuccin-mocha
+      {% elif selected_theme == 'nord' %}nord
+      {% elif selected_theme == 'gruvbox-dark' %}gruvbox-dark
+      {% elif selected_theme == 'everforest-dark' %}everforest-dark
+      {% else %}blue{% endif %}
+      --theme Papirus-Dark
+  changed_when: false
+
+# =============================================================================
+# APPLY ICON THEME TO GTK 3.0 & GTK 4.0
+# =============================================================================
+- name: Configure GTK 3.0 icon settings
+  ansible.builtin.ini_file:
+    path: "{{ ansible_env.HOME }}/.config/gtk-3.0/settings.ini"
+    section: Settings
+    option: gtk-icon-theme-name
+    value: "{{ icon_theme_name | trim }}"
+    mode: '0644'
+
+- name: Configure GTK 4.0 icon settings
+  ansible.builtin.ini_file:
+    path: "{{ ansible_env.HOME }}/.config/gtk-4.0/settings.ini"
+    section: Settings
+    option: gtk-icon-theme-name
+    value: "{{ icon_theme_name | trim }}"
+    mode: '0644'

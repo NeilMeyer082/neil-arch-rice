@@ -1,0 +1,37 @@
+# Auto-generated .zshrc via Ansible
+
+# Install Zap plugin manager if missing
+[ -f "${XDG_DATA_HOME:-$HOME/.local/share}/zap/zap.zsh" ] || \
+    zsh -c "$(curl -shttps://raw.githubusercontent.com/zap-zsh/zap/master/install.zsh) --branch release-v1"
+
+# Load Zap
+source "${XDG_DATA_HOME:-$HOME/.local/share}/zap/zap.zsh"
+
+# Zap Plugins
+plug "zsh-users/zsh-autosuggestions"
+plug "zsh-users/zsh-syntax-highlighting"
+plug "hlissner/zsh-autocomplete"
+
+# Aliases
+alias ls="eza --icons"
+alias cat="bat"
+alias fetch="fastfetch"
+
+# Initialize Tools
+eval "$(starship init zsh)"
+eval "$(zoxide init zsh)"
+
+# Auto-generated Shell Prompt Initialization via Ansible
+{% if selected_prompt == 'starship' %}
+eval "$(starship init zsh)"
+{% elif selected_prompt == 'oh-my-posh' %}
+eval "$(oh-my-posh init zsh --config ~/.config/oh-my-posh/zen.json)"
+{% elif selected_prompt == 'powerlevel10k' %}
+source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme
+{% elif selected_prompt == 'pure' %}
+fpath+=($HOME/.zsh/pure)
+autoload -U promptinit; promptinit
+prompt pure
+{% endif %}
+
+eval "$(zoxide init zsh)"

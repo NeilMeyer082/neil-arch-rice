@@ -1,0 +1,123 @@
+---
+# =============================================================================
+# INSTALL NOTIFICATION DAEMONS
+# =============================================================================
+- name: Install SwayNC
+  when: selected_notifications == 'swaync'
+  become: true
+  community.general.pacman:
+    name: swaync
+    state: present
+
+- name: Install Mako
+  when: selected_notifications == 'mako'
+  become: true
+  community.general.pacman:
+    name: mako
+    state: present
+
+- name: Install Dunst
+  when: selected_notifications == 'dunst'
+  become: true
+  community.general.pacman:
+    name:
+      - dunst
+      - libnotify
+    state: present
+
+# =============================================================================
+# DEPLOY CONFIGURATION TEMPLATES
+# =============================================================================
+- name: Ensure notification configuration directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.config/{{ selected_notifications }}"
+    state: directory
+    mode: '0755'
+
+# SwayNC Templates
+- name: Deploy SwayNC stylesheet
+  when: selected_notifications == 'swaync'
+  ansible.builtin.template:
+    src: swaync.css.j2
+    dest: "{{ ansible_env.HOME }}/.config/swaync/style.css"
+    mode: '0644'
+
+# Dunst Templates
+- name: Deploy Dunst dunstrc
+  when: selected_notifications == 'dunst'
+  ansible.builtin.template:
+    src: dunstrc.j2
+    dest: "{{ ansible_env.HOME }}/.config/dunst/dunstrc"
+    mode: '0644'
+
+# Mako Templates
+- name: Deploy Mako config
+  when: selected_notifications == 'mako'
+  ansible.builtin.template:
+    src: mako.config.j2
+    dest: "{{ ansible_env.HOME }}/.config/mako/config"
+    mode: '0644'
+
+---
+# =============================================================================
+# INSTALL SCREEN LOCKERS & IDLE DAEMONS
+# =============================================================================
+- name: Install Hyprlock & Hypridle
+  when: selected_locker == 'hyprlock'
+  become: true
+  community.general.pacman:
+    name:
+      - hyprlock
+      - hypridle
+    state: present
+
+- name: Install Swaylock-effects & Swayidle (AUR)
+  when: selected_locker == 'swaylock-effects'
+  kewlmt.aur.aur:
+    name:
+      - swaylock-effects-git
+      - swayidle
+    state: present
+
+- name: Install i3lock-color & xss-lock (AUR / X11)
+  when: selected_locker == 'i3lock-color'
+  kewlmt.aur.aur:
+    name:
+      - i3lock-color
+      - xss-lock
+    state: present
+
+# =============================================================================
+# DEPLOY LOCKER CONFIGURATION TEMPLATES
+# =============================================================================
+- name: Ensure locker configuration directories exist
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.config/{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - hypr
+    - swaylock
+
+# Hyprlock Templates
+- name: Deploy Hyprlock configuration template
+  when: selected_locker == 'hyprlock'
+  ansible.builtin.template:
+    src: hyprlock.conf.j2
+    dest: "{{ ansible_env.HOME }}/.config/hypr/hyprlock.conf"
+    mode: '0644'
+
+- name: Deploy Hypridle configuration template
+  when: selected_locker == 'hyprlock'
+  ansible.builtin.template:
+    src: hypridle.conf.j2
+    dest: "{{ ansible_env.HOME }}/.config/hypr/hypridle.conf"
+    mode: '0644'
+
+# Swaylock Templates
+- name: Deploy Swaylock configuration template
+  when: selected_locker == 'swaylock-effects'
+  ansible.builtin.template:
+    src: swaylock.config.j2
+    dest: "{{ ansible_env.HOME }}/.config/swaylock/config"
+    mode: '0644'

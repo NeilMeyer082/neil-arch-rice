@@ -1,0 +1,26 @@
+/* Auto-generated wlogout CSS via Ansible */
+@define-color bg     {{ active_colors.bg }};
+@define-color fg     {{ active_colors.fg }};
+@define-color accent {{ active_colors.accent }};
+@define-color red    {{ active_colors.red }};
+
+window {
+    background-color: rgba({{ active_colors.bg | replace('#', '') }}, 0.85);
+    font-family: "{{ selected_sans_font | default('Inter') }}", sans-serif;
+}
+
+button {
+    border-radius: 8px;
+    border: 2px solid @accent;
+    background-color: @bg;
+    color: @fg;
+    margin: 10px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 25%;
+}
+
+button:hover {
+    background-color: @accent;
+    color: @bg;
+}

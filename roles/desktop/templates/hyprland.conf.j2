@@ -1,0 +1,31 @@
+# Auto-generated Hyprland Config via Ansible
+
+# Monitor Configuration
+monitor=,preferred,auto,1
+
+# Input Devices
+input {
+    kb_layout = us
+    follow_mouse = 1
+    touchpad {
+        natural_scroll = true
+    }
+}
+
+# General Layout & Appearance
+general {
+    gaps_in = 5
+    gaps_out = 10
+    border_size = 2
+    col.active_border = rgba({{ active_colors.accent | replace('#', '') }}ff)
+    col.inactive_border = rgba({{ active_colors.bg | replace('#', '') }}ff)
+    layout = dwindle
+}
+
+# Keybindings
+$mainMod = SUPER
+
+bind = $mainMod, RETURN, exec, {{ selected_terminal | default('kitty') }}
+bind = $mainMod, Q, killactive,
+bind = $mainMod SHIFT, E, exit,
+bind = $mainMod, SPACE, exec, rofi -show drun

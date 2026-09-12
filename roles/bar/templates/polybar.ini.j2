@@ -1,0 +1,54 @@
+; Auto-generated Polybar Config via Ansible
+[colors]
+background = {{ active_colors.bg }}
+foreground = {{ active_colors.fg }}
+primary    = {{ active_colors.accent }}
+alert      = {{ active_colors.red }}
+
+[bar/main]
+width = 100%
+height = 28pt
+radius = 0
+
+background = ${colors.background}
+foreground = ${colors.foreground}
+
+line-size = 3pt
+border-size = 0pt
+
+padding-left = 1
+padding-right = 1
+module-margin = 1
+
+font-0 = "{{ selected_sans_font | default('Inter') }}:size=11;2"
+font-1 = "Symbols Nerd Font:size=11;2"
+
+modules-left = xworkspaces
+modules-center = date
+modules-right = cpu memory pulseaudio
+
+cursor-click = pointer
+cursor-scroll = ns-resize
+
+enable-ipc = true
+
+[module/xworkspaces]
+type = internal/xworkspaces
+label-active = %name%
+label-active-background = ${colors.primary}
+label-active-foreground = ${colors.background}
+label-active-padding = 1
+
+label-occupied = %name%
+label-occupied-padding = 1
+
+label-empty = %name%
+label-empty-foreground = ${colors.foreground}
+label-empty-padding = 1
+
+[module/date]
+type = internal/date
+interval = 1
+date = %Y-%m-%d %H:%M:%S
+label = %date%
+label-foreground = ${colors.primary}
