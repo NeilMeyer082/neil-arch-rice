@@ -20,6 +20,7 @@
       - ttf-font-awesome
     state: present
 
+# AGS Installation
 - name: Install AGS dependencies from official repos
   when: selected_bar == "ags"
   become: true
@@ -34,26 +35,46 @@
     cmd: yay -S --noconfirm --needed aylurs-gtk-shell
   changed_when: false
 
+# Eww Installation
+- name: Install Eww dependencies from official repos
+  when: selected_bar == "eww"
+  become: true
+  community.general.pacman:
+    name: gtk3
+    state: present
+
 - name: Install Eww via AUR
   when: selected_bar == "eww"
-  kewlmt.aur:
-    name: eww
-    state: present
+  become: false
+  ansible.builtin.command:
+    cmd: yay -S --noconfirm --needed eww
+  changed_when: false
 
-- name: Install Quickshell via AUR
+# Quickshell Installation
+- name: Install Quickshell
   when: selected_bar == "quickshell"
-  kewlmt.aur:
-    name: quickshell-git
+  become: true
+  community.general.pacman:
+    name: quickshell
     state: present
 
-- name: Install Fabric framework dependencies via AUR
+# Fabric Framework Installation
+- name: Install Fabric framework official dependencies
   when: selected_bar == "fabric"
-  kewlmt.aur:
+  become: true
+  community.general.pacman:
     name:
-      - python-fabric-git
       - gtk3
       - gtk4
+      - python
     state: present
+
+- name: Install Fabric framework via AUR
+  when: selected_bar == "fabric"
+  become: false
+  ansible.builtin.command:
+    cmd: yay -S --noconfirm --needed python-fabric-git
+  changed_when: false
 
 # =============================================================================
 # CONFIGURATION TEMPLATE DEPLOYMENT
