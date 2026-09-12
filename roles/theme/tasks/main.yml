@@ -84,7 +84,7 @@
 - name: Download and extract macOS Monterey Cursor Theme directly
   when: selected_cursor == 'apple'
   ansible.builtin.unarchive:
-    src: "https://github.com/ful1e5/apple_cursor/releases/download/v2.0.1/macOS-Monterey.tar.gz"
+    src: "https://github.com/ful1e5/apple_cursor/archive/refs/tags/v2.0.1.tar.gz"
     dest: "{{ ansible_env.HOME }}/.icons/"
     remote_src: true
     creates: "{{ ansible_env.HOME }}/.icons/macOS-Monterey"
