@@ -56,7 +56,7 @@ Before running the deployment, ensure your base Arch Linux system is installed a
     sudo pacman -Syu --needed git ansible dialog
     
 
-### 2\. Clone the Repositoryh
+### 2\. Clone the Repository
 
     git clone [https://github.com/NeilMeyer082/neil-arch-rice.git](https://github.com/NeilMeyer082/neil-arch-rice.git)
     cd neil-arch-rice
