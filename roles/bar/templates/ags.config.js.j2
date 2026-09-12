@@ -1,0 +1,12 @@
+const bar = Widget.Window({
+    name: 'bar',
+    anchor: ['top', 'left', 'right'],
+    exclusivity: 'exclusive',
+    child: Widget.CenterBox({
+        start_widget: Widget.Label({ label: 'AGS Bar' }),
+        center_widget: Widget.Label({ label: '{{ selected_wm | upper }}' }),
+        end_widget: Widget.Label({ label: 'Desktop Rice' }),
+    }),
+});
+
+App.config({ windows: [bar] });

@@ -1,0 +1,20 @@
+import fabric
+from fabric.widgets.box import Box
+from fabric.widgets.label import Label
+from fabric.widgets.window import Window
+
+class Bar(Window):
+    def __init__(self):
+        super().__init__(
+            layer="top",
+            anchor="top-left-right",
+            child=Box(
+                children=[
+                    Label(label="Fabric Bar - {{ selected_wm }}")
+                ]
+            )
+        )
+
+if __name__ == "__main__":
+    bar = Bar()
+    fabric.start()

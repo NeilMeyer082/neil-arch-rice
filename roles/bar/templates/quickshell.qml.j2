@@ -1,0 +1,24 @@
+import QtQuick
+import Quickshell
+
+ShellWindow {
+    id: root
+    height: 30
+    anchors {
+        top: true
+        left: true
+        right: true
+    }
+
+    Rectangle {
+        anchors.fill: parent
+        color: "#1a1b26"
+
+        Text {
+            anchors.centerIn: parent
+            text: "Quickshell Bar"
+            color: "#c0caf5"
+            font.family: "{{ selected_sans_font | default('Inter') }}"
+        }
+    }
+}

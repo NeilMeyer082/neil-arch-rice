@@ -8,7 +8,7 @@
   community.general.pacman:
     name:
       - waybar
-      - otf-font-awesome
+      - ttf-font-awesome
     state: present
 
 - name: Install Polybar
@@ -114,4 +114,36 @@
   ansible.builtin.template:
     src: polybar.ini.j2
     dest: "{{ ansible_env.HOME }}/.config/polybar/config.ini"
+    mode: '0644'
+
+# AGS Templates
+- name: Deploy AGS config (JS)
+  when: selected_bar == "ags"
+  ansible.builtin.template:
+    src: ags.config.js.j2
+    dest: "{{ ansible_env.HOME }}/.config/ags/config.js"
+    mode: '0644'
+
+# Eww Templates
+- name: Deploy Eww config (Yuck)
+  when: selected_bar == "eww"
+  ansible.builtin.template:
+    src: eww.yuck.j2
+    dest: "{{ ansible_env.HOME }}/.config/eww/eww.yuck"
+    mode: '0644'
+
+# Quickshell Templates
+- name: Deploy Quickshell config (QML)
+  when: selected_bar == "quickshell"
+  ansible.builtin.template:
+    src: quickshell.qml.j2
+    dest: "{{ ansible_env.HOME }}/.config/quickshell/shell.qml"
+    mode: '0644'
+
+# Fabric Templates
+- name: Deploy Fabric main config (Python)
+  when: selected_bar == "fabric"
+  ansible.builtin.template:
+    src: fabric.main.py.j2
+    dest: "{{ ansible_env.HOME }}/.config/fabric/main.py"
     mode: '0644'
