@@ -9,6 +9,17 @@
     mode: '0755'
 
 # =============================================================================
+# PREREQUISITES FOR ARCHIVE EXTRACTION
+# =============================================================================
+- name: Ensure archive extraction utilities are installed
+  become: true
+  community.general.pacman:
+    name:
+      - unzip
+      - tar
+    state: present
+
+# =============================================================================
 # INSTALL WALLPAPER DAEMONS
 # =============================================================================
 - name: Install Hyprpaper
