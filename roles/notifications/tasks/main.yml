@@ -42,6 +42,13 @@
     dest: "{{ ansible_env.HOME }}/.config/swaync/style.css"
     mode: '0644'
 
+- name: Deploy SwayNC JSON config
+  when: selected_notifications == 'swaync'
+  ansible.builtin.template:
+    src: swaync.config.json.j2
+    dest: "{{ ansible_env.HOME }}/.config/swaync/config.json"
+    mode: '0644'
+
 # Dunst Templates
 - name: Deploy Dunst dunstrc
   when: selected_notifications == 'dunst'

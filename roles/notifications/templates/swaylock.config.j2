@@ -1,18 +1,17 @@
-# Auto-generated Swaylock-effects Configuration via Ansible
 ignore-empty-password
 font={{ selected_sans_font | default('Inter') }}
 clock
 timestr=%H:%M:%S
 datestr=%Y-%m-%d
 
-screenshots
-effect-blur=7x5
-effect-vignette=0.5:0.5
+image={{ ansible_env.HOME }}/Pictures/Wallpapers/default.jpg
+scaling=fill
+color=1a1b26
 
-color={{ active_colors.bg | replace('#', '') }}
-ring-color={{ active_colors.accent | replace('#', '') }}
-keyhl-color={{ active_colors.green | replace('#', '') }}
+indicator-radius=100
+indicator-thickness=7
+ring-color=7dcfff
+key-hl-color=bb9af7
 line-color=00000000
-inside-color={{ active_colors.bg | replace('#', '') }}88
 separator-color=00000000
-text-color={{ active_colors.fg | replace('#', '') }}
+text-color=c0caf5
