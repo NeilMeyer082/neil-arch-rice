@@ -1,0 +1,168 @@
+-- =============================================================================
+-- AWESOME WM CONFIGURATION TEMPLATE (Jinja2 / Lua)
+-- =============================================================================
+
+pcall(require, "luarocks.loader")
+
+local gears = require("gears")
+local awesome = awesome
+local client = client
+local root = root
+local rubato = rubato
+local awful = require("awful")
+require("awful.autofocus")
+local wibox = require("wibox")
+local beautiful = require("beautiful")
+local naughty = require("naughty")
+
+-- Error handling
+if awesome.startup_errors then
+    naughty.notify({
+        preset = naughty.config.presets.critical,
+        title = "Oops, there were errors during startup!",
+        text = awesome.startup_errors
+    })
+end
+
+do
+    local in_error = false
+    awesome.connect_signal("debug::error", function (err)
+        if in_error then return end
+        in_error = true
+        naughty.notify({
+            preset = naughty.config.presets.critical,
+            title = "Oops, an error happened!",
+            text = tostring(err)
+        })
+        in_error = false
+    end)
+end
+
+-- Variable definitions
+beautiful.init(gears.filesystem.get_themes_dir() .. "default/theme.lua")
+beautiful.font = "{{ selected_sans_font | default('Inter') }} 10"
+
+terminal = "{{ selected_terminal | default('kitty') }}"
+editor = os.getenv("EDITOR") or "nano"
+editor_cmd = terminal .. " -e " .. editor
+modkey = "Mod4"
+
+-- Layouts
+awful.layout.layouts = {
+    awful.layout.suit.tile,
+    awful.layout.suit.floating,
+    awful.layout.suit.max,
+}
+
+-- Wallpaper handling
+screen.connect_signal("request::wallpaper", function(s)
+{% if selected_wallpaper_daemon == 'feh' %}
+    awful.spawn.with_shell("feh --bg-fill " .. os.getenv("HOME") .. "/Pictures/Wallpapers/default.jpg")
+{% else %}
+    gears.wallpaper.maximized(beautiful.wallpaper, s, true)
+{% endif %}
+end)
+
+-- Workspaces / Tags
+tag.connect_signal("request::default_layouts", function()
+    awful.tag({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }, nil, awful.layout.layouts[1])
+end)
+
+-- Keybindings
+local globalkeys = gears.table.join(
+    -- System / Core
+    awful.key({ modkey,           }, "Return", function () awful.spawn(terminal) end,
+              {description = "open a terminal", group = "launcher"}),
+    awful.key({ modkey, "Control" }, "r", awesome.restart,
+              {description = "reload awesome", group = "awesome"}),
+    awful.key({ modkey, "Shift"   }, "q", awesome.quit,
+              {description = "quit awesome", group = "awesome"}),
+
+    -- Launchers
+    awful.key({ modkey }, "d", function ()
+{% if selected_launcher == 'rofi' %}
+        awful.spawn("rofi -show drun -show-icons")
+{% else %}
+        awful.spawn("dmenu_run")
+{% endif %}
+    end, {description = "show application launcher", group = "launcher"}),
+
+    -- Focus Navigation (Vim keys)
+    awful.key({ modkey,           }, "j", function () awful.client.focus.byidx( 1) end,
+              {description = "focus next by index", group = "client"}),
+    awful.key({ modkey,           }, "k", function () awful.client.focus.byidx(-1) end,
+              {description = "focus previous by index", group = "client"}),
+
+    -- Layout manipulation
+    awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.byidx(  1)    end,
+              {description = "swap with next client by index", group = "client"}),
+    awful.key({ modkey, "Shift"   }, "k", function () awful.client.swap.byidx( -1)    end,
+              {description = "swap with previous client by index", group = "client"}),
+    awful.key({ modkey,           }, "l",     function () awful.tag.incmwfact( 0.05)          end,
+              {description = "increase master width factor", group = "layout"}),
+    awful.key({ modkey,           }, "h",     function () awful.tag.incmwfact(-0.05)          end,
+              {description = "decrease master width factor", group = "layout"})
+)
+
+local clientkeys = gears.table.join(
+    awful.key({ modkey, "Shift"   }, "c",      function (c) c:kill()                         end,
+              {description = "close", group = "client"}),
+    awful.key({ modkey, "Control" }, "space",  awful.client.floating.toggle                     ,
+              {description = "toggle floating", group = "client"}),
+    awful.key({ modkey,           }, "f",
+        function (c)
+            c.fullscreen = not c.fullscreen
+            c:emit_signal("widget::redraw_needed")
+        end,
+        {description = "toggle fullscreen", group = "client"})
+)
+
+-- Bind all key numbers to tags
+for i = 1, 9 do
+    globalkeys = gears.table.join(globalkeys,
+        -- View tag only.
+        awful.key({ modkey }, "#" .. i + 9,
+                  function ()
+                        local screen = awful.screen.focused()
+                        local tag = screen.tags[i]
+                        if tag then
+                           tag:view_only()
+                        end
+                  end,
+                  {description = "view tag #"..i, group = "tag"}),
+        -- Move client to tag.
+        awful.key({ modkey, "Shift" }, "#" .. i + 9,
+                  function ()
+                      if client.focus then
+                          local tag = client.focus.screen.tags[i]
+                          if tag then
+                              client.focus:move_to_tag(tag)
+                          end
+                     end
+                  end,
+                  {description = "move focused client to tag #"..i, group = "tag"})
+    )
+end
+
+root.keys(globalkeys)
+
+-- Rules
+awful.rules.rules = {
+    { rule = { },
+      properties = { border_width = 2,
+                     border_color = beautiful.border_normal,
+                     focus = awful.client.focus.filter,
+                     raise = true,
+                     keys = clientkeys,
+                     screen = awful.screen.preferred,
+                     placement = awful.placement.no_overlap+awful.placement.no_offscreen
+     }
+    },
+}
+
+-- Autostart Daemons
+awful.spawn.with_shell("picom -b")
+
+{% if selected_notifications == 'dunst' %}
+awful.spawn.with_shell("dunst")
+{% endif %}

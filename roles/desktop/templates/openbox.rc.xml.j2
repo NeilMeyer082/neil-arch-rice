@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ======================================================================= -->
+<!-- OPENBOX CONFIGURATION TEMPLATE (Jinja2 / XML)                           -->
+<!-- ======================================================================= -->
+<openbox_config xmlns="http://openbox.org/3.4/rc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://openbox.org/3.4/rc file:///usr/share/openbox/rc.xsd">
+
+  <!-- ===================================================================== -->
+  <!-- RESISTANCE & WINDOW SNAPPING                                         -->
+  <!-- ===================================================================== -->
+  <resistance>
+    <strength>10</strength>
+    <screen_strength>20</screen_strength>
+  </resistance>
+
+  <!-- ===================================================================== -->
+  <!-- FOCUS BEHAVIOR                                                        -->
+  <!-- ===================================================================== -->
+  <focus>
+    <focusNew>yes</focusNew>
+    <followMouse>no</followMouse>
+    <underMouse>no</underMouse>
+    <focusLast>yes</focusLast>
+  </focus>
+
+  <!-- ===================================================================== -->
+  <!-- WORKSPACES / DESKTOPS                                                 -->
+  <!-- ===================================================================== -->
+  <desktops>
+    <number>4</number>
+    <firstdefault>1</firstdefault>
+    <names>
+      <name>1</name>
+      <name>2</name>
+      <name>3</name>
+      <name>4</name>
+    </names>
+    <popupTime>875</popupTime>
+  </desktops>
+
+  <!-- ===================================================================== -->
+  <!-- THEME & FONTS                                                         -->
+  <!-- ===================================================================== -->
+  <theme>
+    <name>Clearlooks</name>
+    <titleLayout>NLIMC</titleLayout>
+    <keepBorder>yes</keepBorder>
+    <animateIconify>yes</animateIconify>
+    <font place="ActiveWindow">
+      <name>{{ selected_sans_font | default('Inter') }}</name>
+      <size>10</size>
+      <weight>Bold</weight>
+      <slant>Normal</slant>
+    </font>
+    <font place="InactiveWindow">
+      <name>{{ selected_sans_font | default('Inter') }}</name>
+      <size>10</size>
+      <weight>Normal</weight>
+      <slant>Normal</slant>
+    </font>
+    <font place="MenuHeader">
+      <name>{{ selected_sans_font | default('Inter') }}</name>
+      <size>10</size>
+      <weight>Bold</weight>
+      <slant>Normal</slant>
+    </font>
+    <font place="MenuItem">
+      <name>{{ selected_sans_font | default('Inter') }}</name>
+      <size>10</size>
+      <weight>Normal</weight>
+      <slant>Normal</slant>
+    </font>
+    <font place="ActiveOnScreenDisplay">
+      <name>{{ selected_sans_font | default('Inter') }}</name>
+      <size>10</size>
+      <weight>Bold</weight>
+      <slant>Normal</slant>
+    </font>
+  </theme>
+
+  <!-- ===================================================================== -->
+  <!-- KEYBINDINGS                                                           -->
+  <!-- ===================================================================== -->
+  <keyboard>
+    <chainQuitKey>C-g</chainQuitKey>
+
+    <!-- Keybindings for System Applications -->
+    <keybind key="W-Return">
+      <action name="Execute">
+        <command>{{ selected_terminal | default('kitty') }}</command>
+      </action>
+    </keybind>
+
+    <keybind key="W-d">
+      <action name="Execute">
+{% if selected_launcher == 'rofi' %}
+        <command>rofi -show drun -show-icons</command>
+{% else %}
+        <command>dmenu_run</command>
+{% endif %}
+      </action>
+    </keybind>
+
+    <!-- Window Management -->
+    <keybind key="W-S-q">
+      <action name="Close"/>
+    </keybind>
+
+    <keybind key="W-S-c">
+      <action name="Reconfigure"/>
+    </keybind>
+
+    <keybind key="W-S-e">
+      <action name="Exit"/>
+    </keybind>
+
+    <keybind key="W-f">
+      <action name="ToggleFullscreen"/>
+    </keybind>
+
+    <keybind key="W-S-space">
+      <action name="ToggleAlwaysOnTop"/>
+    </keybind>
+
+    <!-- Window Navigation (Alt-Tab) -->
+    <keybind key="A-Tab">
+      <action name="NextWindow">
+        <finalactions>
+          <action name="Focus"/>
+          <action name="Raise"/>
+          <action name="Unshade"/>
+        </finalactions>
+      </action>
+    </keybind>
+
+    <!-- Switch Workspaces (Super + 1..4) -->
+    <keybind key="W-1">
+      <action name="GoToDesktop"><to>1</to></action>
+    </keybind>
+    <keybind key="W-2">
+      <action name="GoToDesktop"><to>2</to></action>
+    </keybind>
+    <keybind key="W-3">
+      <action name="GoToDesktop"><to>3</to></action>
+    </keybind>
+    <keybind key="W-4">
+      <action name="GoToDesktop"><to>4</to></action>
+    </keybind>
+
+    <!-- Send Window to Workspace (Super + Shift + 1..4) -->
+    <keybind key="W-S-1">
+      <action name="SendToDesktop"><to>1</to></action>
+    </keybind>
+    <keybind key="W-S-2">
+      <action name="SendToDesktop"><to>2</to></action>
+    </keybind>
+    <keybind key="W-S-3">
+      <action name="SendToDesktop"><to>3</to></action>
+    </keybind>
+    <keybind key="W-S-4">
+      <action name="SendToDesktop"><to>4</to></action>
+    </keybind>
+  </keyboard>
+
+  <!-- ===================================================================== -->
+  <!-- MOUSE BINDINGS                                                        -->
+  <!-- ===================================================================== -->
+  <mouse>
+    <dragThreshold>1</dragThreshold>
+    <doubleClickTime>500</doubleClickTime>
+    <screenEdgeWarpTime>400</screenEdgeWarpTime>
+    <screenEdgeWarpMouse>false</screenEdgeWarpMouse>
+
+    <context name="Frame">
+      <mousebind button="W-Left" action="Press">
+        <action name="Focus"/>
+        <action name="Raise"/>
+      </mousebind>
+      <mousebind button="W-Left" action="Click">
+        <action name="Unshade"/>
+      </mousebind>
+      <mousebind button="W-Left" action="Drag">
+        <action name="Move"/>
+      </mousebind>
+      <mousebind button="W-Right" action="Press">
+        <action name="Focus"/>
+        <action name="Raise"/>
+        <action name="Unshade"/>
+      </mousebind>
+      <mousebind button="W-Right" action="Drag">
+        <action name="Resize"/>
+      </mousebind>
+    </context>
+
+    <context name="Root">
+      <mousebind button="Middle" action="Press">
+        <action name="ShowMenu"><menu>client-list-combined-menu</menu></action>
+      </mousebind>
+      <mousebind button="Right" action="Press">
+        <action name="ShowMenu"><menu>root-menu</menu></action>
+      </mousebind>
+    </context>
+  </mouse>
+
+  <!-- ===================================================================== -->
+  <!-- MARGINS                                                               -->
+  <!-- ===================================================================== -->
+  <margins>
+    <top>0</top>
+    <bottom>0</bottom>
+    <left>0</left>
+    <right>0</right>
+  </margins>
+</openbox_config>

@@ -1,0 +1,113 @@
+#!/bin/sh
+# =============================================================================
+# RIVER COMPOSITOR CONFIGURATION TEMPLATE (Jinja2)
+# =============================================================================
+
+# Set Modifier Key (Super / Windows Key)
+mod="Mod4"
+
+# -----------------------------------------------------------------------------
+# KEYBINDINGS (Applications & System Controls)
+# -----------------------------------------------------------------------------
+
+# Spawn Terminal Emulator
+riverctl map normal $mod Return spawn "{{ selected_terminal | default('kitty') }}"
+
+# Spawn Application Launcher
+{% if selected_launcher == 'fuzzel' %}
+riverctl map normal $mod D spawn "fuzzel"
+{% elif selected_launcher == 'rofi' %}
+riverctl map normal $mod D spawn "rofi -show drun -show-icons"
+{% elif selected_launcher == 'wofi' %}
+riverctl map normal $mod D spawn "wofi --show drun"
+{% else %}
+riverctl map normal $mod D spawn "dmenu_run"
+{% endif %}
+
+# Close Focused View
+riverctl map normal $mod+Shift Q close
+
+# Exit River
+riverctl map normal $mod+Shift E exit
+
+# -----------------------------------------------------------------------------
+# WINDOW & FOCUS MANAGEMENT (Vim-style navigation)
+# -----------------------------------------------------------------------------
+
+# Focus Views in Direction
+riverctl map normal $mod H focus-view left
+riverctl map normal $mod J focus-view down
+riverctl map normal $mod K focus-view up
+riverctl map normal $mod L focus-view right
+
+# Move Views in Direction
+riverctl map normal $mod+Shift H move left
+riverctl map normal $mod+Shift J move down
+riverctl map normal $mod+Shift K move up
+riverctl map normal $mod+Shift L move right
+
+# Snap Views to Screen Edges
+riverctl map normal $mod+Mod1 H snap left
+riverctl map normal $mod+Mod1 J snap down
+riverctl map normal $mod+Mod1 K snap up
+riverctl map normal $mod+Mod1 L snap right
+
+# Toggle Fullscreen & Floating
+riverctl map normal $mod F toggle-fullscreen
+riverctl map normal $mod Space toggle-float
+
+# -----------------------------------------------------------------------------
+# TAG / WORKSPACE MAPPING (Tags 1-9)
+# -----------------------------------------------------------------------------
+for i in $(seq 1 9); do
+    tag=$((1 << ($i - 1)))
+
+    # Focus tag
+    riverctl map normal $mod $i set-focused-tags $tag
+
+    # Move view to tag
+    riverctl map normal $mod+Shift $i set-view-tags $tag
+
+    # Toggle focus/view tags
+    riverctl map normal $mod+Control $i toggle-focused-tags $tag
+    riverctl map normal $mod+Shift+Control $i toggle-view-tags $tag
+done
+
+# -----------------------------------------------------------------------------
+# LAYOUT & APPEARANCE (rivertile)
+# -----------------------------------------------------------------------------
+
+# Set Border Colors
+riverctl border-color-focused "0x7dcfff"
+riverctl border-color-unfocused "0x414868"
+riverctl border-width 2
+
+# Set Rivertile Layout Generator Defaults
+riverctl default-layout rivertile
+rivertile -view-padding 6 -outer-padding 6 -main-ratio 0.5 &
+
+# Mod+Main-Factor Adjustments
+riverctl map normal $mod H send-layout-cmd rivertile "main-ratio -0.05"
+riverctl map normal $mod L send-layout-cmd rivertile "main-ratio +0.05"
+
+# -----------------------------------------------------------------------------
+# AUTOSTART DAEMONS
+# -----------------------------------------------------------------------------
+
+{% if selected_wallpaper_daemon == 'swaybg' %}
+swaybg -i {{ ansible_env.HOME }}/Pictures/Wallpapers/default.jpg -m fill &
+{% elif selected_wallpaper_daemon == 'hyprpaper' %}
+hyprpaper &
+{% endif %}
+
+{% if selected_bar == 'waybar' %}
+waybar &
+{% endif %}
+
+{% if selected_notifications == 'swaync' %}
+swaync &
+{% elif selected_notifications == 'mako' %}
+mako &
+{% elif selected_notifications == 'dunst' %}
+dunst &
+{% endif %}

@@ -1,0 +1,80 @@
+# =============================================================================
+# SXHKD HOTKEY DAEMON CONFIGURATION TEMPLATE (Jinja2)
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# SYSTEM & APPLICATION LAUNCHERS
+# -----------------------------------------------------------------------------
+
+# Terminal Emulator
+super + Return
+	{{ selected_terminal | default('kitty') }}
+
+# Application Launcher
+super + d
+{% if selected_launcher == 'rofi' %}
+	rofi -show drun -show-icons
+{% elif selected_launcher == 'fuzzel' %}
+	fuzzel
+{% else %}
+	dmenu_run
+{% endif %}
+
+# Logout / Power Menu
+super + Shift + e
+{% if selected_logout_menu == 'rofi' %}
+	{{ ansible_env.HOME }}/.local/bin/rofi-powermenu
+{% else %}
+	bspc quit
+{% endif %}
+
+# Reload SXHKD Configuration
+super + Escape
+	pkill -USR1 -x sxhkd
+
+# -----------------------------------------------------------------------------
+# BSPWM CONTROL & WINDOW MANAGEMENT
+# -----------------------------------------------------------------------------
+
+# Quit or Restart BSPWM
+super + alt + {q,r}
+	bspc {quit,wm -r}
+
+# Close / Kill Focused Window
+super + Shift + q
+	bspc node -c
+
+# Alternate Between Tiling and Monocle (Fullscreen) Layout
+super + m
+	bspc desktop -l next
+
+# Set Window State (Tiling / Pseudo Tiled / Floating / Fullscreen)
+super + {t,shift + t,s,f}
+	bspc node -t {tiled,pseudo_tiled,floating,fullscreen}
+
+# Focus Node in Given Direction (Vim Keys + Arrow Keys)
+super + {_,shift + }{h,j,k,l}
+	bspc node -{f,s} {west,south,north,east}
+
+super + {_,shift + }{Left,Down,Up,Right}
+	bspc node -{f,s} {west,south,north,east}
+
+# Focus or Move Node to Desktop Workspaces 1-10
+super + {_,shift + }{1-9,0}
+	bspc {desktop -f,node -d} '^{1-9,10}'
+
+# Preselect Direction for Next Window Split
+super + ctrl + {h,j,k,l}
+	bspc node -p {west,south,north,east}
+
+# Cancel Preselection
+super + ctrl + space
+	bspc query -N -d | xargs -I id bspc node id -p cancel
+
+# -----------------------------------------------------------------------------
+# WINDOW RESIZING
+# -----------------------------------------------------------------------------
+
+# Expand / Shrink Window Borders (Vim Keys)
+super + alt + {h,j,k,l}
+	bspc node -z {left -20 0,bottom 0 20,top 0 -20,right 20 0}

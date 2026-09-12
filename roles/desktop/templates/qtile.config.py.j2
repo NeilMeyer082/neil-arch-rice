@@ -1,0 +1,173 @@
+# =============================================================================
+# QTILE CONFIGURATION TEMPLATE (Jinja2 / Python)
+# =============================================================================
+
+import os
+import subprocess
+from libqtile import bar, layout, widget, hook
+from libqtile.config import Click, Drag, Group, Key, Match, Screen
+from libqtile.lazy import lazy
+
+# Modifier Keys (Mod4 = Super / Windows Key)
+mod = "mod4"
+
+# Dynamic Applications (from Ansible variables)
+terminal = "{{ selected_terminal | default('kitty') }}"
+
+{% if selected_launcher == 'rofi' %}
+launcher = "rofi -show drun -show-icons"
+{% else %}
+launcher = "dmenu_run"
+{% endif %}
+
+# -----------------------------------------------------------------------------
+# KEYBINDINGS
+# -----------------------------------------------------------------------------
+keys = [
+    # Focus Navigation (Vim Keys)
+    Key([mod], "h", lazy.layout.left(), desc="Move focus to left"),
+    Key([mod], "l", lazy.layout.right(), desc="Move focus to right"),
+    Key([mod], "j", lazy.layout.down(), desc="Move focus down"),
+    Key([mod], "k", lazy.layout.up(), desc="Move focus up"),
+    Key([mod], "space", lazy.layout.next(), desc="Move window focus to other window"),
+
+    # Window Movement
+    Key([mod, "shift"], "h", lazy.layout.shuffle_left(), desc="Move window to left"),
+    Key([mod, "shift"], "l", lazy.layout.shuffle_right(), desc="Move window to right"),
+    Key([mod, "shift"], "j", lazy.layout.shuffle_down(), desc="Move window down"),
+    Key([mod, "shift"], "k", lazy.layout.shuffle_up(), desc="Move window up"),
+
+    # Window Resizing
+    Key([mod, "control"], "h", lazy.layout.grow_left(), desc="Grow window to left"),
+    Key([mod, "control"], "l", lazy.layout.grow_right(), desc="Grow window to right"),
+    Key([mod, "control"], "j", lazy.layout.grow_down(), desc="Grow window down"),
+    Key([mod, "control"], "k", lazy.layout.grow_up(), desc="Grow window up"),
+    Key([mod], "n", lazy.layout.normalize(), desc="Reset all window sizes"),
+
+    # Launch Applications
+    Key([mod], "Return", lazy.spawn(terminal), desc="Launch terminal"),
+    Key([mod], "d", lazy.spawn(launcher), desc="Launch application menu"),
+    Key([mod, "shift"], "q", lazy.window.kill(), desc="Kill focused window"),
+    Key([mod, "shift"], "r", lazy.reload_config(), desc="Reload Qtile config"),
+    Key([mod, "shift"], "e", lazy.shutdown(), desc="Shutdown Qtile"),
+    Key([mod], "f", lazy.window.toggle_fullscreen(), desc="Toggle fullscreen"),
+    Key([mod, "shift"], "space", lazy.window.toggle_floating(), desc="Toggle floating"),
+]
+
+# -----------------------------------------------------------------------------
+# WORKSPACES / GROUPS (1-9)
+# -----------------------------------------------------------------------------
+groups = [Group(i) for i in "123456789"]
+
+for i in groups:
+    keys.extend(
+        [
+            Key(
+                [mod],
+                i.name,
+                lazy.group[i.name].toscreen(),
+                desc=f"Switch to group {i.name}",
+            ),
+            Key(
+                [mod, "shift"],
+                i.name,
+                lazy.window.togroup(i.name, switch_group=True),
+                desc=f"Switch to & move focused window to group {i.name}",
+            ),
+        ]
+    )
+
+# -----------------------------------------------------------------------------
+# LAYOUTS & STYLING
+# -----------------------------------------------------------------------------
+layouts = [
+    layout.Columns(
+        border_focus="#7dcfff",
+        border_normal="#414868",
+        border_width=2,
+        margin=8,
+    ),
+    layout.Max(),
+]
+
+widget_defaults = dict(
+    font="{{ selected_sans_font | default('Inter') }}",
+    fontsize=12,
+    padding=3,
+)
+extension_defaults = widget_defaults.copy()
+
+# -----------------------------------------------------------------------------
+# STATUS BAR
+# -----------------------------------------------------------------------------
+screens = [
+    Screen(
+        top=bar.Bar(
+            [
+                widget.GroupBox(
+                    highlight_method="line",
+                    active="#c0caf5",
+                    inactive="#565f89",
+                    this_current_screen_border="#7dcfff",
+                ),
+                widget.Prompt(),
+                widget.WindowName(foreground="#a9b1d6"),
+                widget.Chord(
+                    chords_colors={
+                        "launch": ("#f7768e", "#ffffff"),
+                    },
+                    name_transform=lambda name: name.upper(),
+                ),
+                widget.Systray(),
+                widget.Clock(format="%Y-%m-%d %a %I:%M %p", foreground="#7aa2f7"),
+            ],
+            24,
+            background="#1a1b26",
+            opacity=0.95,
+        ),
+    ),
+]
+
+# Drag floating layouts
+mouse = [
+    Drag([mod], "Button1", lazy.window.set_position_floating(), start=lazy.window.get_position()),
+    Drag([mod], "Button3", lazy.window.set_size_floating(), start=lazy.window.get_size()),
+    Click([mod], "Button2", lazy.window.bring_to_front()),
+]
+
+dgroups_key_binder = None
+dgroups_app_rules = []
+follow_mouse_focus = True
+bring_front_click = False
+cursor_warps = False
+floating_layout = layout.Floating(
+    float_rules=[
+        *layout.Floating.default_float_rules,
+        Match(wm_class="confirmreset"),
+        Match(wm_class="makebranch"),
+        Match(wm_class="maketag"),
+        Match(wm_class="ssh-askpass"),
+        Match(title="branchdialog"),
+        Match(title="pinentry"),
+    ]
+)
+auto_fullscreen = True
+focus_on_window_activation = "smart"
+reconfigure_screens = True
+auto_minimize = True
+wl_input_rules = None
+wmname = "LG3D"
+
+# -----------------------------------------------------------------------------
+# AUTOSTART HOOKS
+# -----------------------------------------------------------------------------
+@hook.subscribe.startup_once
+def autostart():
+    home = os.path.expanduser("~")
+    subprocess.Popen(["picom", "-b"])
+{% if selected_wallpaper_daemon == 'feh' %}
+    subprocess.Popen(["feh", "--bg-fill", os.path.join(home, "Pictures/Wallpapers/default.jpg")])
+{% endif %}
+{% if selected_notifications == 'dunst' %}
+    subprocess.Popen(["dunst"])
+{% endif %}
