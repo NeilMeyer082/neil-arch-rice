@@ -200,3 +200,50 @@
     src: openbox.rc.xml.j2
     dest: "{{ ansible_env.HOME }}/.config/openbox/rc.xml"
     mode: '0644'
+
+# =============================================================================
+# INSTALL & ENABLE DISPLAY MANAGER
+# =============================================================================
+- name: Set default display manager if not specified
+  ansible.builtin.set_fact:
+    selected_display_manager: "{{ selected_display_manager | default('sddm') }}"
+
+# SDDM Installation (Recommended for Qt/KDE/Wayland setups like Hyprland)
+- name: Install SDDM and dependencies
+  when: selected_display_manager == 'sddm'
+  become: true
+  community.general.pacman:
+    name:
+      - sddm
+      - qt6-svg
+      - qt6-declarative
+    state: present
+
+# LightDM Installation (Recommended for X11 setups like i3, bspwm, awesome)
+- name: Install LightDM and GTK Greeter
+  when: selected_display_manager == 'lightdm'
+  become: true
+  community.general.pacman:
+    name:
+      - lightdm
+      - lightdm-gtk-greeter
+    state: present
+
+# GDM Installation (GNOME Display Manager)
+- name: Install GDM
+  when: selected_display_manager == 'gdm'
+  become: true
+  community.general.pacman:
+    name: gdm
+    state: present
+
+# =============================================================================
+# SYSTEMD SERVICE MANAGEMENT
+# =============================================================================
+- name: Enable Display Manager systemd service
+  become: true
+  ansible.builtin.systemd:
+    name: "{{ selected_display_manager }}"
+    enabled: true
+    state: started
+  ignore_errors: true

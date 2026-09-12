@@ -139,3 +139,6 @@ themes:
     magenta: "#ea76cb"
     cyan: "#179299"
     wallpaper_repo: "https://github.com/zhichaoh/catppuccin-wallpapers.git"
+
+# Supported values: sddm, lightdm, gdm
+selected_display_manager: "sddm"
