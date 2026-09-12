@@ -1,18 +1,12 @@
 ---
 # =============================================================================
-# WALLPAPER INITIALIZATION (SINGLE FILE DOWNLOAD)
+# WALLPAPER DIRECTORY SETUP
 # =============================================================================
 - name: Ensure Wallpapers directory exists
   ansible.builtin.file:
     path: "{{ ansible_env.HOME }}/Pictures/Wallpapers"
     state: directory
     mode: '0755'
-
-- name: Download default wallpaper
-  ansible.builtin.get_url:
-    url: "{{ active_colors.default_wallpaper_url | default('https://raw.githubusercontent.com/catppuccin/wallpapers/main/landscapes/evening-sky.png') }}"
-    dest: "{{ ansible_env.HOME }}/Pictures/Wallpapers/default.jpg"
-    mode: '0644'
 
 # =============================================================================
 # INSTALL WALLPAPER DAEMONS
