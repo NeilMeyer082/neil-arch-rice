@@ -19,33 +19,19 @@
     
     The framework modularizes system setup into **19 distinct Ansible roles**:
     
-    ```text
-    arch-rice/
-    ├── bootstrap.sh            # Main TUI installer & launcher
-    ├── playbook.yml            # Primary Ansible entrypoint
+arch-rice/
+    ├── bootstrap.sh            # Dialog TUI installer & user variable generator
+    ├── site.yml                # Primary Ansible playbook entrypoint
     ├── vars/
-    │   └── user_choices.yml    # Auto-generated choices from TUI
+    │   └── user_choices.yml    # Auto-generated choices from bootstrap TUI
     └── roles/
-        ├── system_base         # Core packages, multilib, base utilities
-        ├── yay                 # AUR helper compilation and configuration
-        ├── display_manager     # SDDM / GDM setup with custom themes
-        ├── hyprland            # Hyprland compositor & keybind configuration
-        ├── waybar              # Dynamic status bar configuration
-        ├── rofi                # Application launcher & power menu
-        ├── hyprpaper           # Wallpaper management service
-        ├── hyprlock            # Screen locking & PAM authentication
-        ├── hypridle            # Power management & idle daemons
-        ├── kitty               # Terminal emulator configuration & fonts
-        ├── starship            # Cross-shell prompt customization
-        ├── zsh                 # Shell aliases, plugins (autosuggestions/syntax)
-        ├── neovim              # Editor setup & LSP integration
-        ├── fastfetch           # System information display
-        ├── audio               # Pipewire, Wireplumber, & pavucontrol
-        ├── bluetooth           # Bluez & Blueman manager service
-        ├── fonts               # Nerd Fonts (JetBrainsMono, FontAwesome)
-        ├── theme               # GTK/Qt themes, icon packs, and cursor icons
-        └── gaming              # Steam, Lutris, Wine-staging, and DXVK
-    
+        ├── system_base         # Pacman mirrors, multilib, AUR helper (yay), audio tools & base tools
+        ├── desktop             # GPU detection (NVIDIA/AMD/Intel), Display Managers, & WMs
+        ├── bar                 # Status bar framework (Waybar, Polybar, AGS, Eww, Quickshell, Fabric)
+        ├── launcher            # Application launchers & logout menus (Rofi, Fuzzel, Wofi, wlogout)
+        ├── terminal            # Terminal emulators, shells, prompts, multiplexers, & fetches
+        └── theme               # GTK/X11 theme engines, icons (Papirus/Candy/etc.), cursors, & wallpapers
+ 
 
 ## 🚀 Quick Start (Bare-Metal & Local VM)
 

@@ -1,5 +1,35 @@
 ---
 # =============================================================================
+# PIPEWIRE SOUND SERVER & AUDIO UTILITIES
+# =============================================================================
+- name: Install PipeWire audio stack and volume utilities
+  become: true
+  community.general.pacman:
+    name:
+      - pipewire
+      - pipewire-audio
+      - pipewire-alsa
+      - pipewire-pulse
+      - pipewire-jack
+      - wireplumber
+      - pavucontrol
+      - playerctl
+      - alsa-utils
+    state: present
+
+- name: Enable and start PipeWire user services
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    scope: user
+    enabled: true
+    state: started
+  loop:
+    - pipewire.service
+    - pipewire-pulse.service
+    - wireplumber.service
+  ignore_errors: true
+
+# =============================================================================
 # INSTALL ICON GLYPH & FALLBACK FONTS (REQUIRED FOR ALL RICES)
 # =============================================================================
 - name: Install universal icon glyph fallbacks and emoji fonts
