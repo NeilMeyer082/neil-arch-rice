@@ -58,7 +58,7 @@ Before running the deployment, ensure your base Arch Linux system is installed a
 
 ### 2\. Clone the Repository
 
-    git clone [https://github.com/NeilMeyer082/neil-arch-rice.git](https://github.com/NeilMeyer082/neil-arch-rice.git)
+    git clone https://github.com/NeilMeyer082/neil-arch-rice.git
     cd neil-arch-rice
     
 
