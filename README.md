@@ -6,6 +6,16 @@ This framework features an interactive TUI installer, customizable dynamic theme
 
 ---
 
+## 🎯 Design Philosophy: Pure Desktop Environment
+
+This framework follows a strict **DE-only design philosophy**:
+
+* **Automated Desktop Environment, Zero Bloat:** The framework exists solely to automate the installation and styling of your Desktop Environment / Window Manager stack (compositors, status bars, launchers, fonts, cursors, and GTK themes).
+* **No Bundled User Applications:** The playbook intentionally **does not install web browsers** (e.g., Firefox, Chromium, Brave), media players, office suites, or user applications. 
+* **User Control First:** You get a clean, functional, and visually polished desktop experience out of the box, leaving complete freedom for you to install your preferred user-space applications post-setup.
+
+---
+
 ## 📸 Overview
 
 * **OS Target:** Arch Linux (x86_64)
@@ -56,4 +66,4 @@ Run the bootstrap script to launch the `dialog` TUI:
     chmod +x bootstrap.sh
     ./bootstrap.sh
     
-Follow the on-screen options to select your preferred packages, fonts, desktop themes, and extra software suites (e.g., Gaming stack). The TUI automatically writes your selections to `vars/user_choices.yml` and launches the Ansible execution pipeline.
+Follow the on-screen options to select your preferred packages, fonts, desktop themes etc. The TUI automatically writes your selections to `vars/user_choices.yml` and launches the Ansible execution pipeline.
