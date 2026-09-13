@@ -32,7 +32,7 @@ arch-rice/
     ├── launcher            # Application launchers & logout menus (Rofi, Fuzzel, Wofi, wlogout)
     ├── terminal            # Terminal emulators, shells, prompts, multiplexers, & fetches
     └── theme               # GTK/X11 theme engines, icons (Papirus/Candy/etc.), cursors, & wallpapers
- 
+```
 
 ## 🚀 Quick Start (Bare-Metal & Local VM)
 
