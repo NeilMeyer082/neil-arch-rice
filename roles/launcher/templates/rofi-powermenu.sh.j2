@@ -1,12 +1,45 @@
 #!/usr/bin/env bash
-# Auto-generated Rofi Power Menu via Ansible
 
-chosen=$(echo -e "Lock\nLogout\nSuspend\nReboot\nShutdown" | rofi -dmenu -i -p "Power Menu:")
+# Options
+shutdown=' Shutdown'
+reboot=' Reboot'
+lock=' Lock'
+suspend='󰤄 Suspend'
+logout='󰍃 Logout'
 
-case "$chosen" in
-    Lock)     hyprlock || swaylock || i3lock-color ;;
-    Logout)   hyprctl dispatch exit 0 || swaymsg exit || i3-msg exit ;;
-    Suspend)  systemctl suspend ;;
-    Reboot)   systemctl reboot ;;
-    Shutdown) systemctl poweroff ;;
+# Options passed to rofi
+options="$shutdown\n$reboot\n$lock\n$suspend\n$logout"
+
+chosen="$(echo -e "$options" | rofi -dmenu -i -p "Power Menu" -theme-str 'window {width: 250px;} listview {lines: 5;}')"
+
+case $chosen in
+$shutdown)
+  systemctl poweroff
+  ;;
+$reboot)
+  systemctl reboot
+  ;;
+$lock)
+  {% if selected_wm in ['hyprland', 'sway', 'niri', 'river'] %}
+  hyprlock || swaylock
+  {% else %}
+  i3lock || slock
+  {% endif %}
+  ;;
+$suspend)
+  systemctl suspend
+  ;;
+$logout)
+  {% if selected_wm == 'hyprland' %}
+  hyprctl dispatch exit
+  {% elif selected_wm == 'sway' %}
+  swaymsg exit
+  {% elif selected_wm == 'i3' %}
+  i3-msg exit
+  {% elif selected_wm == 'bspwm' %}
+  bspc quit
+  {% else %}
+  loginctl terminate-user $USER
+  {% endif %}
+  ;;
 esac

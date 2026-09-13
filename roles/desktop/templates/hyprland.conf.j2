@@ -3,6 +3,34 @@
 # Monitor Configuration
 monitor=,preferred,auto,1
 
+# Execute System Services & Autostart Components
+{% if selected_bar == 'waybar' %}
+exec-once = waybar
+{% elif selected_bar == 'ags' %}
+exec-once = ags
+{% elif selected_bar == 'eww' %}
+exec-once = eww daemon && eww open bar
+{% elif selected_bar == 'quickshell' %}
+exec-once = quickshell
+{% elif selected_bar == 'fabric' %}
+exec-once = python ~/.config/fabric/main.py
+{% endif %}
+
+{% if selected_wallpaper_daemon == 'hyprpaper' %}
+exec-once = hyprpaper
+{% elif selected_wallpaper_daemon == 'swaybg' %}
+exec-once = swaybg -i ~/Pictures/Wallpapers/default.jpg -m fill
+{% elif selected_wallpaper_daemon == 'swww' %}
+exec-once = swww-daemon && swww img ~/Pictures/Wallpapers/default.jpg
+{% endif %}
+
+# Set GTK Cursor Theme Name and Size
+env = XCURSOR_THEME,{{ cursor_name | trim }}
+env = XCURSOR_SIZE,24
+env = HYPRCURSOR_THEME,{{ cursor_name | trim }}
+env = HYPRCURSOR_SIZE,24
+exec-once = hyprctl setcursor {{ cursor_name | trim }} 24
+
 # Input Devices
 input {
     kb_layout = us
@@ -17,15 +45,41 @@ general {
     gaps_in = 5
     gaps_out = 10
     border_size = 2
-    col.active_border = rgba({{ active_colors.accent | replace('#', '') }}ff)
-    col.inactive_border = rgba({{ active_colors.bg | replace('#', '') }}ff)
+    col.active_border = rgba({{ active_colors.accent | default('cba6f7') | replace('#', '') }}ff)
+    col.inactive_border = rgba({{ active_colors.bg | default('1e1e2e') | replace('#', '') }}ff)
     layout = dwindle
 }
 
 # Keybindings
 $mainMod = SUPER
 
+# Applications
 bind = $mainMod, RETURN, exec, {{ selected_terminal | default('kitty') }}
 bind = $mainMod, Q, killactive,
-bind = $mainMod SHIFT, E, exit,
+bind = $mainMod SHIFT, E, exec, {% if selected_logout_menu == 'wlogout' %}wlogout{% else %}rofi-powermenu{% endif %}
+
+# Dynamic Application Launcher Keybinding
+{% if selected_launcher == 'rofi' %}
 bind = $mainMod, SPACE, exec, rofi -show drun
+{% elif selected_launcher == 'fuzzel' %}
+bind = $mainMod, SPACE, exec, fuzzel
+{% elif selected_launcher == 'wofi' %}
+bind = $mainMod, SPACE, exec, wofi --show drun
+{% elif selected_launcher == 'ulauncher' %}
+bind = $mainMod, SPACE, exec, ulauncher
+{% else %}
+bind = $mainMod, SPACE, exec, rofi -show drun
+{% endif %}
+
+# Navigation Controls
+bind = $mainMod, left, movefocus, l
+bind = $mainMod, right, movefocus, r
+bind = $mainMod, up, movefocus, u
+bind = $mainMod, down, movefocus, d
+
+# Workspace Switching
+bind = $mainMod, 1, workspace, 1
+bind = $mainMod, 2, workspace, 2
+bind = $mainMod, 3, workspace, 3
+bind = $mainMod, 4, workspace, 4
+bind = $mainMod, 5, workspace, 5

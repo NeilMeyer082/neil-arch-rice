@@ -45,6 +45,16 @@
   changed_when: false
 
 # =============================================================================
+# INSTALL LOGOUT MENU PACKAGES
+# =============================================================================
+- name: Install wlogout
+  when: selected_logout_menu == 'wlogout'
+  become: true
+  community.general.pacman:
+    name: wlogout
+    state: present
+
+# =============================================================================
 # CONFIGURATION TEMPLATE DEPLOYMENT
 # =============================================================================
 - name: Ensure target launcher directories exist
@@ -78,13 +88,6 @@
     dest: "{{ ansible_env.HOME }}/.config/rofi/colors.rasi"
     mode: '0644'
 
-- name: Deploy Rofi Power Menu helper script
-  when: selected_launcher == 'rofi'
-  ansible.builtin.template:
-    src: rofi-powermenu.sh.j2
-    dest: "{{ ansible_env.HOME }}/.local/bin/rofi-powermenu"
-    mode: '0755'
-
 # Fuzzel Templates
 - name: Deploy Fuzzel configuration template
   when: selected_launcher == 'fuzzel'
@@ -117,8 +120,8 @@
     dest: "{{ ansible_env.HOME }}/.config/wlogout/style.css"
     mode: '0644'
 
-- name: Deploy Rofi Power Menu script
-  when: selected_logout_menu == 'rofi'
+- name: Deploy Rofi Power Menu helper script
+  when: selected_logout_menu == 'rofi' or selected_launcher == 'rofi'
   ansible.builtin.template:
     src: rofi-powermenu.sh.j2
     dest: "{{ ansible_env.HOME }}/.local/bin/rofi-powermenu"

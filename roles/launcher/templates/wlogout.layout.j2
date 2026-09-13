@@ -1,30 +1,38 @@
-{
-    "label" : "lock",
-    "action" : "hyprlock || swaylock",
-    "text" : "Lock",
-    "keybind" : "l"
-}
-{
-    "label" : "logout",
-    "action" : "hyprctl dispatch exit 0 || swaymsg exit",
-    "text" : "Logout",
-    "keybind" : "e"
-}
-{
-    "label" : "suspend",
-    "action" : "systemctl suspend",
-    "text" : "Suspend",
-    "keybind" : "u"
-}
-{
-    "label" : "reboot",
-    "action" : "systemctl reboot",
-    "text" : "Reboot",
-    "keybind" : "r"
-}
-{
-    "label" : "shutdown",
-    "action" : "systemctl poweroff",
-    "text" : "Shutdown",
-    "keybind" : "s"
-}
+[
+    {
+        "label" : "lock",
+        "action" : "{% if selected_wm in ['hyprland', 'sway', 'niri', 'river'] %}hyprlock || swaylock{% else %}i3lock{% endif %}",
+        "text" : "Lock",
+        "keybind" : "l"
+    },
+    {
+        "label" : "hibernate",
+        "action" : "systemctl hibernate",
+        "text" : "Hibernate",
+        "keybind" : "h"
+    },
+    {
+        "label" : "logout",
+        "action" : "{% if selected_wm == 'hyprland' %}hyprctl dispatch exit{% elif selected_wm == 'sway' %}swaymsg exit{% else %}loginctl terminate-user $USER{% endif %}",
+        "text" : "Logout",
+        "keybind" : "e"
+    },
+    {
+        "label" : "shutdown",
+        "action" : "systemctl poweroff",
+        "text" : "Shutdown",
+        "keybind" : "s"
+    },
+    {
+        "label" : "suspend",
+        "action" : "systemctl suspend",
+        "text" : "Suspend",
+        "keybind" : "u"
+    },
+    {
+        "label" : "reboot",
+        "action" : "systemctl reboot",
+        "text" : "Reboot",
+        "keybind" : "r"
+    }
+]

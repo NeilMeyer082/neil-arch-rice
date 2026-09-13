@@ -1,0 +1,47 @@
+# Fuzzel Configuration File
+font=JetBrainsMono Nerd Font:size=10
+icon-theme={{ icon_theme_name | default('Papirus-Dark') }}
+prompt="❯ "
+terminal={{ default_terminal | default('kitty') }}
+layer=overlay
+width=35
+lines=10
+horizontal-pad=15
+vertical-pad=10
+inner-pad=5
+
+[colors]
+{% if selected_theme == 'catppuccin-latte' %}
+background=eff1f5ff
+text=4c4f69ff
+match=8839efff
+selection=e6e9efff
+selection-text=4c4f69ff
+border=ca9ee6ff
+{% elif selected_theme == 'nord' %}
+background=2e3440ff
+text=eceff4ff
+match=88c0d0ff
+selection=3b4252ff
+selection-text=eceff4ff
+border=81a1c1ff
+{% elif selected_theme == 'gruvbox-dark' %}
+background=282828ff
+text=ebdbb2ff
+match=fabd2fff
+selection=3c3836ff
+selection-text=ebdbb2ff
+border=fe8019ff
+{% else %}
+# Default: Catppuccin Mocha
+background=1e1e2eff
+text=cdd6f4ff
+match=cba6f7ff
+selection=313244ff
+selection-text=cdd6f4ff
+border=b4befeff
+{% endif %}
+
+[border]
+width=2
+radius=10

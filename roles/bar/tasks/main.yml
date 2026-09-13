@@ -9,6 +9,7 @@
     name:
       - waybar
       - ttf-font-awesome
+      - ttf-jetbrains-mono-nerd
     state: present
 
 - name: Install Polybar
@@ -18,6 +19,7 @@
     name:
       - polybar
       - ttf-font-awesome
+      - ttf-jetbrains-mono-nerd
     state: present
 
 # AGS Installation
@@ -25,7 +27,9 @@
   when: selected_bar == "ags"
   become: true
   community.general.pacman:
-    name: gjs
+    name:
+      - gjs
+      - ttf-jetbrains-mono-nerd
     state: present
 
 - name: Install AGS (Aylur's GTK Shell) via AUR
@@ -40,7 +44,9 @@
   when: selected_bar == "eww"
   become: true
   community.general.pacman:
-    name: gtk3
+    name:
+      - gtk3
+      - ttf-jetbrains-mono-nerd
     state: present
 
 - name: Install Eww via AUR
@@ -55,7 +61,9 @@
   when: selected_bar == "quickshell"
   become: true
   community.general.pacman:
-    name: quickshell
+    name:
+      - quickshell
+      - ttf-jetbrains-mono-nerd
     state: present
 
 # Fabric Framework Installation
@@ -67,6 +75,7 @@
       - gtk3
       - gtk4
       - python
+      - ttf-jetbrains-mono-nerd
     state: present
 
 - name: Install Fabric framework via AUR
@@ -80,18 +89,11 @@
 # CONFIGURATION TEMPLATE DEPLOYMENT
 # =============================================================================
 - name: Ensure bar configuration directory exists
+  when: selected_bar is defined and selected_bar != "none"
   ansible.builtin.file:
     path: "{{ ansible_env.HOME }}/.config/{{ selected_bar }}"
     state: directory
     mode: '0755'
-  when: selected_bar not in ["none", "fabric"]
-
-- name: Ensure fabric configuration directory exists
-  ansible.builtin.file:
-    path: "{{ ansible_env.HOME }}/.config/fabric"
-    state: directory
-    mode: '0755'
-  when: selected_bar == "fabric"
 
 # Waybar Templates
 - name: Deploy Waybar config (JSONC)

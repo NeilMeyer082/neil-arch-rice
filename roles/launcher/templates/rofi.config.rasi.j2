@@ -1,27 +1,110 @@
-/* Auto-generated Rofi Config via Ansible */
+/* Rofi Configuration File */
 configuration {
-    modi:                       "drun,run,window";
+    modi:                       "drun,run,filebrowser,window";
     show-icons:                 true;
-    icon-theme:                 "{{ icon_theme_name | default('Papirus-Dark') }}";
-    display-drun:               " Apps";
-    display-run:                " Run";
-    display-window:             " Windows";
+    display-drun:               "APPS";
+    display-run:                "RUN";
+    display-filebrowser:        "FILES";
+    display-window:             "WINDOW";
     drun-display-format:        "{name}";
-    font:                       "{{ selected_sans_font | default('Inter') }} 11";
+    window-format:              "{w} · {c} · {t}";
+    font:                       "JetBrainsMono Nerd Font 10";
+    icon-theme:                 "{{ icon_theme_name | default('Papirus-Dark') }}";
 }
 
 @import "colors.rasi"
 
 window {
-    width:                      35%;
-    border:                     2px;
-    border-color:               @accent;
-    border-radius:              8px;
-    padding:                    15px;
+    transparency:               "real";
+    location:                   center;
+    anchor:                     center;
+    fullscreen:                 false;
+    width:                      600px;
+    x-offset:                   0px;
+    y-offset:                   0px;
+    enabled:                    true;
+    margin:                     0px;
+    padding:                    0px;
+    border:                     2px solid;
+    border-radius:              12px;
+    border-color:               @border;
+    cursor:                     "default";
+    background-color:           @background;
 }
 
-element selected {
-    background-color:           @accent;
-    text-color:                 @bg;
-    border-radius:              4px;
+mainbox {
+    enabled:                    true;
+    spacing:                    10px;
+    margin:                     0px;
+    padding:                    20px;
+    background-color:           transparent;
+    children:                   [ "inputbar", "listview" ];
+}
+
+inputbar {
+    enabled:                    true;
+    spacing:                    10px;
+    margin:                     0px;
+    padding:                    10px;
+    border-radius:              8px;
+    background-color:           @background-alt;
+    text-color:                 @foreground;
+    children:                   [ "entry" ];
+}
+
+entry {
+    enabled:                    true;
+    background-color:           transparent;
+    text-color:                 inherit;
+    cursor:                     text;
+    placeholder:                "Search...";
+    placeholder-color:          inherit;
+}
+
+listview {
+    enabled:                    true;
+    columns:                    1;
+    lines:                      8;
+    cycle:                      true;
+    dynamic:                    true;
+    scrollbar:                  false;
+    layout:                     vertical;
+    reverse:                    false;
+    fixed-height:               true;
+    fixed-columns:              true;
+    spacing:                    5px;
+    background-color:           transparent;
+    text-color:                 @foreground;
+}
+
+element {
+    enabled:                    true;
+    spacing:                    10px;
+    margin:                     0px;
+    padding:                    8px;
+    border-radius:              6px;
+    background-color:           transparent;
+    text-color:                 @foreground;
+    cursor:                     pointer;
+}
+
+element selected.normal {
+    background-color:           @selected;
+    text-color:                 @background;
+}
+
+element-icon {
+    background-color:           transparent;
+    text-color:                 inherit;
+    size:                       24px;
+    cursor:                     inherit;
+}
+
+element-text {
+    background-color:           transparent;
+    text-color:                 inherit;
+    highlight:                  inherit;
+    cursor:                     inherit;
+    vertical-align:             0.5;
+    horizontal-align:           0.0;
 }

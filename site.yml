@@ -1,0 +1,13 @@
+---
+- name: Arch Linux Ricing Framework Provisioning
+  hosts: localhost
+  connection: local
+  vars_files:
+    - vars/user_choices.yml
+
+  roles:
+    - role: desktop       # GPU Drivers, Display Manager, WMs/Compositors
+    - role: theme         # GTK Settings, Cursors, Icons, Wallpapers
+    - role: terminal      # Kitty/Alacritty/Ghostty configs & fonts
+    - role: launcher      # Rofi/Fuzzel/wlogout
+    - role: bar           # Waybar/Polybar

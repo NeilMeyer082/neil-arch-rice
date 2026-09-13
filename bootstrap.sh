@@ -146,13 +146,19 @@ echo "selected_bar: \"${BAR_CHOICE}\"" >>vars/user_choices.yml
 # -----------------------------------------------------------------------------
 CURSOR_CHOICE=$(dialog --clear --backtitle "Arch Linux Ricing Framework" \
   --title " Cursor Theme Selection " \
-  --menu "Choose your primary cursor theme:" 16 65 6 \
-  "bibata-ice" "Bibata Modern Ice - Material rounded white cursor (Popular)" \
-  "bibata-amber" "Bibata Modern Amber - Material rounded amber cursor" \
-  "breezex" "BreezeX           - Extended KDE Plasma crisp cursor" \
-  "apple" "Apple macOS       - macOS style cursor theme" \
-  "qogir" "Qogir             - Flat material vector cursor" \
-  "vimix" "Vimix             - Modern sleek material design cursor" \
+  --menu "Choose your primary cursor theme:" 20 70 12 \
+  "bibata-ice"        "Bibata Modern Ice      - Material rounded white cursor" \
+  "bibata-amber"      "Bibata Modern Amber    - Material rounded amber cursor" \
+  "bibata-classic"    "Bibata Modern Classic  - Material rounded dark cursor" \
+  "breezex"           "BreezeX Light          - Extended KDE Plasma crisp cursor" \
+  "apple"            "Apple macOS            - macOS Monterey style cursor" \
+  "vimix"            "Vimix                  - Modern sleek material design cursor" \
+  "catppuccin-mocha" "Catppuccin Mocha       - Darkest pastel theme cursor" \
+  "catppuccin-macchiato" "Catppuccin Macchiato - Medium dark pastel cursor" \
+  "catppuccin-frappe" "Catppuccin Frappe      - Muted dark pastel cursor" \
+  "catppuccin-latte"  "Catppuccin Latte       - Light theme pastel cursor" \
+  "phinger-dark"     "Phinger Dark           - Overpriced-style pixel cursor (Dark)" \
+  "phinger-light"    "Phinger Light          - Overpriced-style pixel cursor (Light)" \
   3>&1 1>&2 2>&3)
 
 if [ -z "$CURSOR_CHOICE" ]; then
@@ -167,14 +173,11 @@ echo "selected_cursor: \"${CURSOR_CHOICE}\"" >>vars/user_choices.yml
 # -----------------------------------------------------------------------------
 ICON_CHOICE=$(dialog --clear --backtitle "Arch Linux Ricing Framework" \
   --title " Icon Theme Selection " \
-  --menu "Choose your primary desktop icon theme:" 16 65 7 \
-  "papirus" "Papirus    - Pixel-perfect flat icons (Supports auto-recoloring)" \
-  "tela" "Tela       - Modern colorful flat design icons" \
-  "candy" "Candy      - High-vibrancy neon gradient icons" \
-  "colloid" "Colloid    - Clean, rounded pastel icon set" \
-  "beautyline" "BeautyLine - Modern outlined icons with comprehensive coverage" \
-  "qogir" "Qogir      - Colorful material-inspired icon theme" \
-  "flat-remix" "Flat Remix - Depth-based material design icons" \
+  --menu "Choose your primary desktop icon theme:" 16 70 6 \
+  "papirus"      "Papirus      - Pixel-perfect flat icons (Auto-recolors)" \
+  "candy"        "Candy        - High-vibrancy neon gradient icons" \
+  "la-capitaine" "La Capitaine - macOS & Material design inspired icon pack" \
+  "flat-remix"   "Flat Remix   - Depth-based material design icons" \
   3>&1 1>&2 2>&3)
 
 if [ -z "$ICON_CHOICE" ]; then

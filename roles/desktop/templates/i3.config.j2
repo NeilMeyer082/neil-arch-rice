@@ -14,20 +14,33 @@ set $right l
 # Dynamic System Applications (from Ansible variables)
 set $term {{ selected_terminal | default('kitty') }}
 
+# Dynamic Application Launcher Configuration
 {% if selected_launcher == 'rofi' %}
 set $menu rofi -show drun -show-icons
+{% elif selected_launcher == 'fuzzel' %}
+set $menu fuzzel
+{% elif selected_launcher == 'wofi' %}
+set $menu wofi --show drun
+{% elif selected_launcher == 'ulauncher' %}
+set $menu ulauncher
 {% else %}
 set $menu dmenu_run
 {% endif %}
 
 # Dynamic Font Configuration
-font pango:{{ selected_sans_font | default('Inter') }} 10
+font pango:{{ selected_sans_font | default('JetBrainsMono Nerd Font') }} 10
 
 # Window Borders & Gaps
 gaps inner 8
 gaps outer 4
 default_border pixel 2
 default_floating_border pixel 2
+
+# Theme Colors (Window Borders)
+# class                 border  backgr. text    indicator child_border
+client.focused          #{{ active_colors.accent | default('cba6f7') | replace('#', '') }} #{{ active_colors.accent | default('cba6f7') | replace('#', '') }} #{{ active_colors.bg | default('1e1e2e') | replace('#', '') }} #{{ active_colors.accent | default('cba6f7') | replace('#', '') }} #{{ active_colors.accent | default('cba6f7') | replace('#', '') }}
+client.focused_inactive #{{ active_colors.bg | default('1e1e2e') | replace('#', '') }} #{{ active_colors.bg | default('1e1e2e') | replace('#', '') }} #{{ active_colors.fg | default('cdd6f4') | replace('#', '') }} #{{ active_colors.bg | default('1e1e2e') | replace('#', '') }} #{{ active_colors.bg | default('1e1e2e') | replace('#', '') }}
+client.unfocused        #{{ active_colors.bg | default('1e1e2e') | replace('#', '') }} #{{ active_colors.bg | default('1e1e2e') | replace('#', '') }} #{{ active_colors.fg | default('cdd6f4') | replace('#', '') }} #{{ active_colors.bg | default('1e1e2e') | replace('#', '') }} #{{ active_colors.bg | default('1e1e2e') | replace('#', '') }}
 
 # =============================================================================
 # KEYBINDINGS
@@ -39,7 +52,7 @@ bindsym $mod+d exec $menu
 bindsym $mod+Shift+q kill
 bindsym $mod+Shift+c reload
 bindsym $mod+Shift+r restart
-bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'Exit i3?' -B 'Yes, exit' 'i3-msg exit'"
+bindsym $mod+Shift+e exec {% if selected_logout_menu == 'wlogout' %}wlogout{% else %}~/.local/bin/rofi-powermenu{% endif %}
 
 # Focus Movement
 bindsym $mod+$left focus left
@@ -105,6 +118,9 @@ bindsym $mod+minus scratchpad show
 # =============================================================================
 # AUTOSTART / BACKGROUND DAEMONS (X11)
 # =============================================================================
+
+# Set Cursor Theme for X11 Root Window
+exec_always --no-startup-id xsetroot -cursor_name {{ cursor_name | default('left_ptr') | trim }}
 
 # X11 Compositor (Picom)
 exec_always --no-startup-id picom -b

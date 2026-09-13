@@ -1,26 +1,37 @@
-/* Auto-generated wlogout CSS via Ansible */
-@define-color bg     {{ active_colors.bg }};
-@define-color fg     {{ active_colors.fg }};
-@define-color accent {{ active_colors.accent }};
-@define-color red    {{ active_colors.red }};
+* {
+    background-image: none;
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    font-size: 14px;
+}
 
 window {
-    background-color: rgba({{ active_colors.bg | replace('#', '') }}, 0.85);
-    font-family: "{{ selected_sans_font | default('Inter') }}", sans-serif;
+    background-color: rgba(30, 30, 46, 0.85);
 }
 
 button {
-    border-radius: 8px;
-    border: 2px solid @accent;
-    background-color: @bg;
-    color: @fg;
-    margin: 10px;
+    border-radius: 10px;
+    border-style: solid;
+    border-width: 2px;
     background-repeat: no-repeat;
     background-position: center;
     background-size: 25%;
+    margin: 10px;
+{% if selected_theme == 'catppuccin-latte' %}
+    color: #4c4f69;
+    background-color: #eff1f5;
+    border-color: #ca9ee6;
+{% elif selected_theme == 'nord' %}
+    color: #eceff4;
+    background-color: #2e3440;
+    border-color: #81a1c1;
+{% else %}
+    color: #cdd6f4;
+    background-color: #1e1e2e;
+    border-color: #cba6f7;
+{% endif %}
 }
 
-button:hover {
-    background-color: @accent;
-    color: @bg;
+button:focus, button:active, button:hover {
+    background-color: rgba(203, 166, 247, 0.2);
+    border-color: #f5e0dc;
 }

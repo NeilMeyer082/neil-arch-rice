@@ -1,6 +1,94 @@
 ---
 # =============================================================================
-# WAYLAND COMPOSITORS
+# 1. BASE GRAPHICS & MESA DRIVERS
+# =============================================================================
+- name: Install universal Mesa, Vulkan, and X11 graphics base packages
+  become: true
+  community.general.pacman:
+    name:
+      - mesa
+      - lib32-mesa
+      - vulkan-icd-loader
+      - lib32-vulkan-icd-loader
+      - xorg-xwayland
+      - xf86-video-fbdev
+    state: present
+
+# =============================================================================
+# INTEL GPU DRIVERS
+# =============================================================================
+- name: Install Intel GPU drivers and VA-API hardware acceleration
+  when: ansible_facts['lspci_vendor_intel'] is defined or ('Intel' in (ansible_facts['cmdline'] | default('')))
+  become: true
+  community.general.pacman:
+    name:
+      - intel-media-driver
+      - vulkan-intel
+      - lib32-vulkan-intel
+    state: present
+
+# =============================================================================
+# AMD GPU DRIVERS
+# =============================================================================
+- name: Install AMD GPU drivers and Vulkan support
+  when: ansible_facts['lspci_vendor_amd'] is defined or ('AMD' in (ansible_facts['cmdline'] | default('')))
+  become: true
+  community.general.pacman:
+    name:
+      - xf86-video-amdgpu
+      - vulkan-radeon
+      - lib32-vulkan-radeon
+      - libva-mesa-driver
+    state: present
+
+# =============================================================================
+# NVIDIA GPU DRIVERS & WAYLAND MODESETTING
+# =============================================================================
+- name: Install NVIDIA proprietary drivers and utilities
+  when: (gpu_vendor | default('')) == 'nvidia' or (selected_gpu | default('')) == 'nvidia'
+  become: true
+  community.general.pacman:
+    name:
+      - nvidia
+      - nvidia-utils
+      - lib32-nvidia-utils
+      - nvidia-settings
+      - egl-wayland
+    state: present
+
+- name: Enable NVIDIA DRM modesetting in modprobe (Critical for Wayland/Hyprland)
+  when: (gpu_vendor | default('')) == 'nvidia' or (selected_gpu | default('')) == 'nvidia'
+  become: true
+  ansible.builtin.copy:
+    dest: /etc/modprobe.d/nvidia.conf
+    content: |
+      options nvidia_drm modeset=1 fbdev=1
+    mode: '0644'
+
+- name: Add NVIDIA modules to initramfs for early KMS
+  when: (gpu_vendor | default('')) == 'nvidia' or (selected_gpu | default('')) == 'nvidia'
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/mkinitcpio.conf
+    regexp: '^MODULES=\((.*)\)'
+    line: 'MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)'
+  notify: Rebuild initramfs
+
+# =============================================================================
+# VIRTUAL MACHINE DRIVERS (QEMU / KVM / VirtualBox)
+# =============================================================================
+- name: Install QEMU/KVM guest agent and SPICE drivers
+  when: (ansible_facts['virtualization_type'] | default('')) in ['kvm', 'qemu', 'bochs']
+  become: true
+  community.general.pacman:
+    name:
+      - qemu-guest-agent
+      - spice-vdagent
+      - xf86-video-qxl
+    state: present
+
+# =============================================================================
+# 2. WAYLAND COMPOSITORS
 # =============================================================================
 - name: Install Hyprland and core Wayland tools
   when: selected_wm == "hyprland"
@@ -46,7 +134,7 @@
     state: present
 
 # =============================================================================
-# X11 WINDOW MANAGERS
+# 3. X11 WINDOW MANAGERS
 # =============================================================================
 - name: Install i3-wm ecosystem
   when: selected_wm == "i3"
@@ -112,7 +200,7 @@
     state: present
 
 # =============================================================================
-# DEPLOY WINDOW MANAGER CONFIGURATION TEMPLATES
+# 4. DEPLOY WINDOW MANAGER CONFIGURATION TEMPLATES
 # =============================================================================
 - name: Ensure target configuration directories exist
   ansible.builtin.file:
@@ -202,13 +290,12 @@
     mode: '0644'
 
 # =============================================================================
-# INSTALL & ENABLE DISPLAY MANAGER
+# 5. INSTALL & ENABLE DISPLAY MANAGER
 # =============================================================================
 - name: Set default display manager if not specified
   ansible.builtin.set_fact:
     selected_display_manager: "{{ selected_display_manager | default('sddm') }}"
 
-# SDDM Installation (Recommended for Qt/KDE/Wayland setups like Hyprland)
 - name: Install SDDM and dependencies
   when: selected_display_manager == 'sddm'
   become: true
@@ -219,7 +306,6 @@
       - qt6-declarative
     state: present
 
-# LightDM Installation (Recommended for X11 setups like i3, bspwm, awesome)
 - name: Install LightDM and GTK Greeter
   when: selected_display_manager == 'lightdm'
   become: true
@@ -229,7 +315,6 @@
       - lightdm-gtk-greeter
     state: present
 
-# GDM Installation (GNOME Display Manager)
 - name: Install GDM
   when: selected_display_manager == 'gdm'
   become: true
@@ -237,9 +322,6 @@
     name: gdm
     state: present
 
-# =============================================================================
-# SYSTEMD SERVICE MANAGEMENT
-# =============================================================================
 - name: Enable Display Manager systemd service
   become: true
   ansible.builtin.systemd:
