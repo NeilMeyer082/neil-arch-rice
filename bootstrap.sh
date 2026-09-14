@@ -1,11 +1,16 @@
 #!/usr/bin/env bash
 set -e
 
+# Always operate from the repo root, regardless of where the user invoked us.
+# Fixes "playbook.yml could not be found" when run from $HOME or elsewhere.
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "${SCRIPT_DIR}"
+
 # Ensure dependencies are available for the installer menu
 sudo pacman -Sy --needed --noconfirm dialog ansible git
 
 # Ensure target directory for variables exists
-mkdir -p vars
+mkdir -p "${SCRIPT_DIR}/vars"
 
 # -----------------------------------------------------------------------------
 # 1. WINDOW MANAGER SELECTION
@@ -30,7 +35,7 @@ if [ -z "$WM_CHOICE" ]; then
 fi
 
 # Initialize/Overwrite user_choices.yml with the first choice
-cat <<EOF >vars/user_choices.yml
+cat <<EOF >"${SCRIPT_DIR}/vars/user_choices.yml"
 selected_wm: "${WM_CHOICE}"
 EOF
 
@@ -57,7 +62,7 @@ if [ -z "$THEME_CHOICE" ]; then
   exit 1
 fi
 
-echo "selected_theme: \"${THEME_CHOICE}\"" >>vars/user_choices.yml
+echo "selected_theme: \"${THEME_CHOICE}\"" >>"${SCRIPT_DIR}/vars/user_choices.yml"
 
 # -----------------------------------------------------------------------------
 # 3. WALLPAPER DAEMON SELECTION
@@ -76,7 +81,7 @@ if [ -z "$WALLPAPER_CHOICE" ]; then
   exit 1
 fi
 
-echo "selected_wallpaper_daemon: \"${WALLPAPER_CHOICE}\"" >>vars/user_choices.yml
+echo "selected_wallpaper_daemon: \"${WALLPAPER_CHOICE}\"" >>"${SCRIPT_DIR}/vars/user_choices.yml"
 
 # -----------------------------------------------------------------------------
 # 4. UI SANS-SERIF FONT SELECTION
@@ -96,7 +101,7 @@ if [ -z "$SANS_FONT_CHOICE" ]; then
   exit 1
 fi
 
-echo "selected_sans_font: \"${SANS_FONT_CHOICE}\"" >>vars/user_choices.yml
+echo "selected_sans_font: \"${SANS_FONT_CHOICE}\"" >>"${SCRIPT_DIR}/vars/user_choices.yml"
 
 # -----------------------------------------------------------------------------
 # 5. TERMINAL MONOSPACE FONT SELECTION
@@ -117,7 +122,7 @@ if [ -z "$MONO_FONT_CHOICE" ]; then
   exit 1
 fi
 
-echo "selected_mono_font: \"${MONO_FONT_CHOICE}\"" >>vars/user_choices.yml
+echo "selected_mono_font: \"${MONO_FONT_CHOICE}\"" >>"${SCRIPT_DIR}/vars/user_choices.yml"
 
 # -----------------------------------------------------------------------------
 # 6. STATUS BAR & DESKTOP SHELL SELECTION
@@ -139,7 +144,7 @@ if [ -z "$BAR_CHOICE" ]; then
   exit 1
 fi
 
-echo "selected_bar: \"${BAR_CHOICE}\"" >>vars/user_choices.yml
+echo "selected_bar: \"${BAR_CHOICE}\"" >>"${SCRIPT_DIR}/vars/user_choices.yml"
 
 # -----------------------------------------------------------------------------
 # 7. CURSOR THEME SELECTION
@@ -166,7 +171,7 @@ if [ -z "$CURSOR_CHOICE" ]; then
   exit 1
 fi
 
-echo "selected_cursor: \"${CURSOR_CHOICE}\"" >>vars/user_choices.yml
+echo "selected_cursor: \"${CURSOR_CHOICE}\"" >>"${SCRIPT_DIR}/vars/user_choices.yml"
 
 # -----------------------------------------------------------------------------
 # 8. ICON THEME SELECTION
@@ -185,7 +190,7 @@ if [ -z "$ICON_CHOICE" ]; then
   exit 1
 fi
 
-echo "selected_icon_theme: \"${ICON_CHOICE}\"" >>vars/user_choices.yml
+echo "selected_icon_theme: \"${ICON_CHOICE}\"" >>"${SCRIPT_DIR}/vars/user_choices.yml"
 
 # -----------------------------------------------------------------------------
 # 9. APPLICATION LAUNCHER SELECTION
@@ -205,7 +210,7 @@ if [ -z "$LAUNCHER_CHOICE" ]; then
   exit 1
 fi
 
-echo "selected_launcher: \"${LAUNCHER_CHOICE}\"" >>vars/user_choices.yml
+echo "selected_launcher: \"${LAUNCHER_CHOICE}\"" >>"${SCRIPT_DIR}/vars/user_choices.yml"
 
 # -----------------------------------------------------------------------------
 # 10. NOTIFICATION DAEMON SELECTION
@@ -223,7 +228,7 @@ if [ -z "$NOTIF_CHOICE" ]; then
   exit 1
 fi
 
-echo "selected_notifications: \"${NOTIF_CHOICE}\"" >>vars/user_choices.yml
+echo "selected_notifications: \"${NOTIF_CHOICE}\"" >>"${SCRIPT_DIR}/vars/user_choices.yml"
 
 # -----------------------------------------------------------------------------
 # 11. LOGOUT MENU SELECTION
@@ -240,7 +245,7 @@ if [ -z "$LOGOUT_CHOICE" ]; then
   exit 1
 fi
 
-echo "selected_logout_menu: \"${LOGOUT_CHOICE}\"" >>vars/user_choices.yml
+echo "selected_logout_menu: \"${LOGOUT_CHOICE}\"" >>"${SCRIPT_DIR}/vars/user_choices.yml"
 
 # -----------------------------------------------------------------------------
 # 12. SCREEN LOCKER SELECTION
@@ -258,7 +263,7 @@ if [ -z "$LOCKER_CHOICE" ]; then
   exit 1
 fi
 
-echo "selected_locker: \"${LOCKER_CHOICE}\"" >>vars/user_choices.yml
+echo "selected_locker: \"${LOCKER_CHOICE}\"" >>"${SCRIPT_DIR}/vars/user_choices.yml"
 
 # -----------------------------------------------------------------------------
 # 13. TERMINAL EMULATOR SELECTION
@@ -278,7 +283,7 @@ if [ -z "$TERM_CHOICE" ]; then
   exit 1
 fi
 
-echo "selected_terminal: \"${TERM_CHOICE}\"" >>vars/user_choices.yml
+echo "selected_terminal: \"${TERM_CHOICE}\"" >>"${SCRIPT_DIR}/vars/user_choices.yml"
 
 # -----------------------------------------------------------------------------
 # 14. SHELL SELECTION
@@ -296,7 +301,7 @@ if [ -z "$SHELL_CHOICE" ]; then
   exit 1
 fi
 
-echo "selected_shell: \"${SHELL_CHOICE}\"" >>vars/user_choices.yml
+echo "selected_shell: \"${SHELL_CHOICE}\"" >>"${SCRIPT_DIR}/vars/user_choices.yml"
 
 # -----------------------------------------------------------------------------
 # 15. SHELL PROMPT SELECTION
@@ -315,7 +320,7 @@ if [ -z "$PROMPT_CHOICE" ]; then
   exit 1
 fi
 
-echo "selected_prompt: \"${PROMPT_CHOICE}\"" >>vars/user_choices.yml
+echo "selected_prompt: \"${PROMPT_CHOICE}\"" >>"${SCRIPT_DIR}/vars/user_choices.yml"
 
 # -----------------------------------------------------------------------------
 # 16. TERMINAL MULTIPLEXER SELECTION
@@ -333,7 +338,7 @@ if [ -z "$MUX_CHOICE" ]; then
   exit 1
 fi
 
-echo "selected_multiplexer: \"${MUX_CHOICE}\"" >>vars/user_choices.yml
+echo "selected_multiplexer: \"${MUX_CHOICE}\"" >>"${SCRIPT_DIR}/vars/user_choices.yml"
 
 # -----------------------------------------------------------------------------
 # 17. SYSTEM FETCH UTILITY SELECTION
@@ -352,7 +357,7 @@ if [ -z "$FETCH_CHOICE" ]; then
   exit 1
 fi
 
-echo "selected_fetch: \"${FETCH_CHOICE}\"" >>vars/user_choices.yml
+echo "selected_fetch: \"${FETCH_CHOICE}\"" >>"${SCRIPT_DIR}/vars/user_choices.yml"
 
 # -----------------------------------------------------------------------------
 # 18. FILE MANAGER SELECTION
@@ -372,7 +377,7 @@ if [ -z "$FM_CHOICE" ]; then
   exit 1
 fi
 
-echo "selected_file_manager: \"${FM_CHOICE}\"" >>vars/user_choices.yml
+echo "selected_file_manager: \"${FM_CHOICE}\"" >>"${SCRIPT_DIR}/vars/user_choices.yml"
 
 # Clear screen and display summary before launching playbook
 clear
@@ -382,4 +387,4 @@ echo " Launching Ansible execution pipeline..."
 echo "================================================================="
 
 # Execute Ansible Playbook
-ansible-playbook -K playbook.yml
+ansible-playbook -K "${SCRIPT_DIR}/playbook.yml"
